@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 This script to processes spirometry data into spirolib.spiro_signal_process format
-Requires data to be alread extracted from raw files
+Requires data to be already extracted from raw files
 """
 #
 #%% Import libraries
@@ -17,8 +17,8 @@ import spirolib
 #%% Load unprocessed data
 FVLData_unpro=pickle.load(open("FVLdata_unprocessed.p","rb"))
 # In this example, the unprocessed data is the best flow-volume trial data for
-# each patient ID. The the data is stored as a dictionary that maps a string called patient ID (also EMD) to
-# a list defined as [Time, Volume, Flow]. This data is assuled to have been already extracted
+# each patient ID. The data is stored as a dictionary that maps a string called patient ID (also EMD) to
+# a list defined as [Time, Volume, Flow]. This data is assumed to have been already extracted
 
 
 
@@ -37,15 +37,15 @@ for patID in FVLData_unpro:
     
     #sp.plotFVL(False) # if you want to plot
     
-    # if only a single trial is available, the following function is not required.
-    # Alternatively, the used can define other functions or performa manual checks
-    # to ensure the quality of the spirometry manoeuvers
+    # If only a single trial is available, the following function is not required.
+    # Alternatively, the user can define other functions or perform manual checks
+    # to ensure the quality of the spirometry manoeuvers.
     # The function can now also reject signals if BEV criteria are not met.
     flag_accept,reason=sp.check_acceptability_of_spirogram() 
     
-    # If the quality of the manoeuvre is acceptable, then finalize the signal
-    # by also calculating the reference values. The sex, age and height need to be
-    # read as input from an external dataset. Here, we use some random values
+    # If the quality of the manoeuvre is acceptable, finalize the signal
+    # by calculating reference values. The sex, age, and height need to be
+    # read as input from an external dataset. Here, we use placeholder values.
     if flag_accept:
 #        sex=df.loc[patID,'sex'] 
 #        age=df.loc[patID,'age']
@@ -54,7 +54,8 @@ for patID in FVLData_unpro:
         age = 60
         height = 175
         
-        sp.finalize_signal(sex,float(age),float(height))
+        # Pass parameters by name to match signature
+        sp.finalize_signal(sex=sex, age=age, height=height)
         FVLData_processed[patID]=sp
 
     cnt_progress+=1  
@@ -62,4 +63,4 @@ for patID in FVLData_unpro:
     print("Progress (%) = ", round(100*cnt_progress/len(FVLData_unpro)))
 
 #%% Save processed data
-pickle.dump(FVLData_processed,open("FVLdata_processed.p","wb")) 
+pickle.dump(FVLData_processed,open("FVLdata_processed.p","wb"))
