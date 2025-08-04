@@ -1,0 +1,8 @@
+target:
+  - url: "docs"
+
+reinit: "b"
+
+ignore:
+  - "old"
+  - "README.md"
