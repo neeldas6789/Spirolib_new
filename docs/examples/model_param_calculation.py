@@ -39,43 +39,41 @@ for EMD in Best_FVL:
          
          #%% AreaFE % predicted
          aFE = spirolib.spiro_features_extraction.areaFE(FE_vol, FE_flow, sex, age , height)
-         Area_Pred = aFE.calc_AreaPred() # Removed corr parameter
+         Area_Pred = aFE.calc_AreaPred() # calc_AreaPred no longer requires a correction parameter
          AreaFE = aFE.calc_areaFE()
-         AreaFE_PerPred = 100 *(AreaFE/Area_Pred)
+         AreaFE_PerPred = 100*(AreaFE/Area_Pred)
          
          #%% Angle of collapse
          ac = spirolib.spiro_features_extraction.angle_of_collapse(FE_vol, FE_flow)
-         AC = ac.calc_AC( plotModel = True, plotProcess = True)
-         # Note:Set plot_model and  plotProcess to False, to speed up calculations
+         AC = ac.calc_AC(plotModel=True, plotProcess=True)
+         # Note: Set plotModel and plotProcess to False to speed up calculations
          
          #%% Deflating balloon model
          # Note: The 'excitation_type' parameter for run_model is now primarily for internal tracking;
          # only the 'Default' behavior (initial conditions from PEF) is actively modeled.
          db = spirolib.spiro_features_extraction.deflating_baloon(FE_time,FE_vol,FE_flow)
-         db.run_model(excitation_type = "", plot_model = True,add_title_text = EMD) 
-         # Note:Set plot_model = False to speed up calculations
+         db.run_model(excitation_type="", plot_model=True, add_title_text=EMD) 
+         # Note: Set plot_model=False to speed up calculations
          
          # To simulate how the FVL varies on changing a parameter of the model (for research purposes)
          # The sim_type parameter for run_simulation is now primarily for internal tracking;
          # only the 'Default' behavior (initial conditions from PEF) is actively modeled.
-         #db.run_simulation(sim_param = 'zeta',sim_type="",num_sims=4, percentage_step=10, plot_FVL_only = True)
+         # db.run_simulation(sim_param='zeta', sim_type="", num_sims=4, percentage_step=10, plot_FVL_only=True)
          
          # Extract model parameters
-         wn =  db.wn #coeffient of combined elastic recoil and pleural pressure
-         zeta = db.zeta #dimensionless coefficient indicating small airaway resistance
+         wn = db.wn    # coefficient of combined elastic recoil and pleural pressure
+         zeta = db.zeta # dimensionless coefficient indicating small airway resistance
          
-         # Get model fit performance 
+         # Get model fit performance
          R2_vol = db.R2_volume
-         R2_flow= db.R2_flow
+         R2_flow = db.R2_flow
          mse_vol = db.mse_volume
-         mse_flow= db.mse_flow
+         mse_flow = db.mse_flow
          
-          
-        # Update the database
-        # Some_update_function(dataset, AreaFE_perpred,wn, zeta ***)
+         # Update the database
+         # Some_update_function(dataset, AreaFE_PerPred, wn, zeta)
          
-        #%% Progress bar
-         cnt_curves+=1 
-         print("Progress (%) = ", round(100*cnt_curves/len(Best_FVL)))
-         
-         #break
+         #%% Progress bar
+         cnt_curves += 1 
+         print("Progress (%) =", round(100*cnt_curves/len(Best_FVL)))
+         # break
