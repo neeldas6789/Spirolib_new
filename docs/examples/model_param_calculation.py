@@ -39,7 +39,7 @@ for EMD in Best_FVL:
          
          #%% AreaFE % predicted
          aFE = spirolib.spiro_features_extraction.areaFE(FE_vol, FE_flow, sex, age , height)
-         Area_Pred = aFE.calc_AreaPred() # Removed corr parameter
+         Area_Pred = aFE.calc_AreaPred()
          AreaFE = aFE.calc_areaFE()
          AreaFE_PerPred = 100 *(AreaFE/Area_Pred)
          
@@ -58,7 +58,7 @@ for EMD in Best_FVL:
          # To simulate how the FVL varies on changing a parameter of the model (for research purposes)
          # The sim_type parameter for run_simulation is now primarily for internal tracking;
          # only the 'Default' behavior (initial conditions from PEF) is actively modeled.
-         #db.run_simulation(sim_param = 'zeta',sim_type="",num_sims=4, percentage_step=10, plot_FVL_only = True)
+         #db.run_simulation(sim_param = 'zeta',sim_type ="",num_sims=4, percentage_step=10, plot_FVL_only = True)
          
          # Extract model parameters
          wn =  db.wn #coeffient of combined elastic recoil and pleural pressure
@@ -74,7 +74,7 @@ for EMD in Best_FVL:
         # Update the database
         # Some_update_function(dataset, AreaFE_perpred,wn, zeta ***)
          
-        #%% Progress bar
+         #%% Progress bar
          cnt_curves+=1 
          print("Progress (%) = ", round(100*cnt_curves/len(Best_FVL)))
          

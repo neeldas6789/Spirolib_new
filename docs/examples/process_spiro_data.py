@@ -21,7 +21,6 @@ FVLData_unpro=pickle.load(open("FVLdata_unprocessed.p","rb"))
 # a list defined as [Time, Volume, Flow]. This data is assuled to have been already extracted
 
 
-
 #%% Loop through unprocessed data
 FVLData_processed={}
 cnt_progress=0
@@ -35,7 +34,11 @@ for patID in FVLData_unpro:
     # Create a spiro signal process object
     sp=spirolib.spiro_signal_process(Time,Volume,Flow,patID,"Best",True)
     
-    #sp.plotFVL(False) # if you want to plot
+    # Ensure correct orientation and standardized units before quality checks
+    sp.correct_data_positioning()
+    sp.standerdize_units()
+    
+    # sp.plotFVL(False) # if you want to plot
     
     # if only a single trial is available, the following function is not required.
     # Alternatively, the used can define other functions or performa manual checks
@@ -62,4 +65,4 @@ for patID in FVLData_unpro:
     print("Progress (%) = ", round(100*cnt_progress/len(FVLData_unpro)))
 
 #%% Save processed data
-pickle.dump(FVLData_processed,open("FVLdata_processed.p","wb")) 
+pickle.dump(FVLData_processed,open("FVLdata_processed.p","wb"))
