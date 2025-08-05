@@ -5,7 +5,7 @@ The `spiro_signal_process` class provides tools to analyze spirometry data, part
 ## Class Initialization
 
 ```python
-sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_signal_is_FE)
+sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_signal_is_FE, scale)
 ```
 
 ### Parameters
@@ -16,6 +16,7 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 * `patientID`: Unique identifier for the patient
 * `trialID`: Identifier for the trial
 * `flag_given_signal_is_FE`: Boolean flag indicating if the signal is forced expiration only
+* `scale`: Numeric multiplier applied to the `time` values (e.g., set `scale=0.001` if `time` is in milliseconds to convert to seconds)
 
 ---
 
@@ -140,20 +141,6 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 * Plotting methods help visualize raw and processed signals for verification
 * ECCS93 reference computations depend on gender, age, and height
 * All array attributes are assumed to be NumPy arrays internally
-
----
-
-## Example Workflow
-
-```python
-sp = spiro_signal_process(time, volume, flow, patientID='P1', trialID='T1', flag_given_signal_is_FE=False)
-sp.correct_data_positioning()
-sp.standerdize_units()
-accepted, reason = sp.check_acceptability_of_spirogram()
-if accepted:
-    sp.finalize_signal(sex=1, age=35, height=175)
-    print(sp.FEV1, sp.FVC, sp.PEF)
-```
 
 ---
 
