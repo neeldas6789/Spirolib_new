@@ -1,6 +1,7 @@
 target:
-  - url: "docs"
+  - url: "docs/"
   - url: "README.md"
+  - url: "https://github.com/neeldas6789/Spirolib_docs/tree/main/docs"
 
 reinit: "as"
 
