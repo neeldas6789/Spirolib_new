@@ -5,17 +5,18 @@ The `spiro_signal_process` class provides tools to analyze spirometry data, part
 ## Class Initialization
 
 ```python
-sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_signal_is_FE)
+sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_signal_is_FE, scale_factor)
 ```
 
 ### Parameters
 
-* `time`: Time array of the spirometry manoeuvre (list or 1D array, preferably in seconds)
-* `volume`: Volume array of the manoeuvre (list or 1D array, preferably in litres)
-* `flow`: Flow array (list or 1D array, preferably in litres/sec)
+* `time`: Time array of the spirometry manoeuvre (list or 1D array)
+* `volume`: Volume array of the manoeuvre (list or 1D array)
+* `flow`: Flow array (list or 1D array)
 * `patientID`: Unique identifier for the patient
 * `trialID`: Identifier for the trial
 * `flag_given_signal_is_FE`: Boolean flag indicating if the signal is forced expiration only
+* `scale_factor`: Numeric multiplier applied to the time array (e.g., `0.001` to convert milliseconds to seconds)
 
 ---
 
@@ -73,7 +74,7 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
 * `get_FE_signal(start_type=None, thresh_percent_begin=2, thresh_percent_end=0.25, plot=False)`
 
-  * Returns FE segment (time, volume, flow) and optionally plots it. For `BEV` or `thresh_PEF` `start_type`, the output signals will be padded so flow and volume start/end at zero.
+  * Returns FE segment (time, volume, flow) and optionally plots it. For `BEV` or `thresh_PEF` `start_type`, the output signals are zero-padded at start/end to ensure t0=0 and flow/volume begin and end at zero.
 
 ### Trimming & Thresholding
 
@@ -131,29 +132,6 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 * Reference prediction percentages: `FEV1_PerPred`, `FVC_PerPred`, etc.
 * `index1`, `index2`: Start and end indices of FE segment
 * `signal_finalized`: Flag indicating processing completion
-
----
-
-## Notes
-
-* It is important to run `correct_data_positioning()` and `standerdize_units()` before performing calculations or acceptability checks
-* Plotting methods help visualize raw and processed signals for verification
-* ECCS93 reference computations depend on gender, age, and height
-* All array attributes are assumed to be NumPy arrays internally
-
----
-
-## Example Workflow
-
-```python
-sp = spiro_signal_process(time, volume, flow, patientID='P1', trialID='T1', flag_given_signal_is_FE=False)
-sp.correct_data_positioning()
-sp.standerdize_units()
-accepted, reason = sp.check_acceptability_of_spirogram()
-if accepted:
-    sp.finalize_signal(sex=1, age=35, height=175)
-    print(sp.FEV1, sp.FVC, sp.PEF)
-```
 
 ---
 

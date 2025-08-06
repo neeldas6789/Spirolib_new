@@ -14,9 +14,9 @@ Clone the repository and use the library in your Python projects.
 Import the modules from the `spirolib` package in your Python scripts.
 
 ## Project Structure
-- `spirolib/` - Main refactored spirolib code
-- `docs/` - Documentation and guides
-- `old/` - Old spirolib monolithi module
+- `spirolib/` - Refactored spirolib package code
+- `docs/` - Documentation and example scripts
+- `old/` - Legacy spirolib monolithic module
 
 ## License
 Specify your license here.
