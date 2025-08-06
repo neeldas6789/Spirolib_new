@@ -2,7 +2,7 @@ target:
   - url: "docs"
   - url: "README.md"
 
-reinit: "c"
+reinit: "a"
 
 include:
   - "spirolib"
