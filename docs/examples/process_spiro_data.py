@@ -21,7 +21,6 @@ FVLData_unpro=pickle.load(open("FVLdata_unprocessed.p","rb"))
 # a list defined as [Time, Volume, Flow]. This data is assuled to have been already extracted
 
 
-
 #%% Loop through unprocessed data
 FVLData_processed={}
 cnt_progress=0
@@ -33,7 +32,8 @@ for patID in FVLData_unpro:
     Flow=data[2]
     
     # Create a spiro signal process object
-    sp=spirolib.spiro_signal_process(Time,Volume,Flow,patID,"Best",True)
+    # Note: the constructor now requires a 'scale' parameter to multiply time values
+    sp=spirolib.spiro_signal_process(Time,Volume,Flow,patID,"Best",True,1)
     
     #sp.plotFVL(False) # if you want to plot
     
