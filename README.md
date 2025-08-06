@@ -16,7 +16,8 @@ Import the modules from the `spirolib` package in your Python scripts.
 ## Project Structure
 - `spirolib/` - Main refactored spirolib code
 - `docs/` - Documentation and guides
-- `old/` - Old spirolib monolithi module
+- `docs/examples/` - Example scripts demonstrating typical workflows
+- `old/` - Legacy spirolib monolithic module
 
 ## License
 Specify your license here.
