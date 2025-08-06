@@ -1,5 +1,6 @@
 target:
   - url: "docs"
+  - url: "README.md"
 
 reinit: "c"
 
