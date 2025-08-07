@@ -32,8 +32,8 @@ for patID in FVLData_unpro:
     Volume=data[1]
     Flow=data[2]
     
-    # Create a spiro signal process object
-    sp=spirolib.spiro_signal_process(Time,Volume,Flow,patID,"Best",True)
+    # Create a spiro signal process object (now requires a 'scale' argument)
+    sp=spirolib.spiro_signal_process(Time,Volume,Flow,patID,"Best",True,1)
     
     #sp.plotFVL(False) # if you want to plot
     
