@@ -1,6 +1,6 @@
 target:
-  - url: "https://github.com/neeldas6789/Spirolib_docs/tree/main/docs"
-  - url: "docs/"
+  - url: "https://github.com/neeldas6789/Spirolib_docs/blob/main/docs/spiro_signal_process.md"
+  - url: "docs/spiro_signal_process.md"
 
 reinit: "a"
 
