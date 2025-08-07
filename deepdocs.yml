@@ -2,7 +2,7 @@ target:
   - url: "https://github.com/neeldas6789/Spirolib_docs/blob/main/docs"
   - url: "docs/"
 
-reinit: "a"
+reinit: "b"
 
 include:
   - "spirolib"
