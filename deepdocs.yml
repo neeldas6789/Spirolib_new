@@ -1,7 +1,7 @@
 target:
   - url: "https://github.com/neeldas6789/Spirolib_docs/tree/main/docs"
 
-reinit: "as"
+reinit: "a"
 
 include:
   - "spirolib"
