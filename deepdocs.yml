@@ -1,5 +1,7 @@
 target:
-  - url: "docs"
+  - url: "https://github.com/neeldas6789/Spirolib_docs/tree/ext-test1/docs"
+  - url: "https://github.com/neeldas6789/Spirolib_docs/tree/ext-test1/examples"
+  - url: "https://github.com/neeldas6789/Spirolib_docs/blob/ext-test1/README.md"
 
 reinit: "a"
 
