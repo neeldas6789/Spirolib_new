@@ -1,5 +1,6 @@
 target:
   - url: "https://github.com/neeldas6789/Spirolib_docs/tree/main/docs"
+  - url: "docs/"
 
 reinit: "a"
 
