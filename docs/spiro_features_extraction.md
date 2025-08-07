@@ -1,5 +1,3 @@
-# Documentation: `spiro_features_extraction`
-
 The `spiro_features_extraction` class provides a modular architecture for extracting advanced mathematical features from forced expiratory (FE) spirometry signals. It includes:
 
 * Area under the Flow-Volume Loop (% predicted)
@@ -104,13 +102,18 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 
   * Computes error between predicted and actual volume/flow to be minimized
 
-* `run_model(excitation_type="", plot_model=False, ...)`
+* `run_model(excitation_type="", plot_model=False, add_title_text="", **kwargs)`
 
-  * Fits model using `differential_evolution` optimizer and plots results. Note: The `excitation_type` parameter is now primarily for internal tracking; only the 'Default' behavior (initial conditions from PEF) is actively modeled.
+  * Fits the model using `scipy.optimize.differential_evolution` and plots results.
+  * `excitation_type`: now internally tracked; only the 'Default' behavior (initial conditions from PEF) is modeled.
+  * `plot_model`: set to True to display the fitted model.
+  * `add_title_text`: optional string appended to the plot title for annotation.
 
-* `run_simulation(sim_param, num_sims, percentage_step, plot_FVL_only)`
+* `run_simulation(sim_param, sim_type="", num_sims, percentage_step, plot_FVL_only)`
 
-  * Runs sensitivity analysis by varying one model parameter. Note: This function only simulates based on the currently active default model, ignoring previously supported `excitation_type` settings.
+  * Runs sensitivity analysis by varying one model parameter.   
+  * `sim_type`: optional classification tag; simulation logic remains based on the default model.
+  * Only the default excitation behavior is actively modeled.
 
 * `calc_FEV1_FVC()`
 
@@ -124,7 +127,7 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 
 ## Excitation Types
 
-Previous `excitation_type` options (`Linear`, `Exponential pressure`, `Non linear`) are no longer actively modeled. The `run_model` method now defaults to a single internal mechanism that uses initial conditions (volume and flow at PEF) for the deflation phase. The `excitation_type` parameter can still be passed but primarily serves for internal classification rather than altering model behavior.
+Previous `excitation_type` options (`Linear`, `Exponential pressure`, `Non linear`) are no longer actively modeled. The `run_model` method now defaults to initial conditions at PEF; `excitation_type` can still be passed but is used for internal classification only.
 
 ---
 
@@ -151,7 +154,10 @@ area_actual = af.calc_areaFE()
 
 # Fit balloon model
 db = spiro_features_extraction.deflating_baloon(time, volume, flow)
-db.run_model(excitation_type="", plot_model=True) # Excitation type now defaults to initial conditions at PEF
+# Model fitting with title annotation
+db.run_model(excitation_type="", plot_model=True, add_title_text="Patient123")
+# Sensitivity analysis on 'zeta' parameter
+db.run_simulation(sim_param='zeta', sim_type="", num_sims=4, percentage_step=10, plot_FVL_only=True)
 ```
 
 ---
