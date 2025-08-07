@@ -1,5 +1,6 @@
 target:
   - url: "docs"
+  - url: "examples"
 
 reinit: "c"
 
