@@ -1,5 +1,3 @@
-# Documentation: `spiro_features_extraction`
-
 The `spiro_features_extraction` class provides a modular architecture for extracting advanced mathematical features from forced expiratory (FE) spirometry signals. It includes:
 
 * Area under the Flow-Volume Loop (% predicted)
@@ -104,13 +102,22 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 
   * Computes error between predicted and actual volume/flow to be minimized
 
-* `run_model(excitation_type="", plot_model=False, ...)`
+* `run_model(excitation_type="", plot_model=False, add_title_text=None, ... )`
 
-  * Fits model using `differential_evolution` optimizer and plots results. Note: The `excitation_type` parameter is now primarily for internal tracking; only the 'Default' behavior (initial conditions from PEF) is actively modeled.
+  * Fits model using `differential_evolution` optimizer and plots results.
+  * excitation_type: (string) optional tag for internal tracking; only the default behavior (initial conditions from PEF) is actively modeled.
+  * plot_model: (bool) display the model fit.
+  * add_title_text: (string) optional text to add as a plot title.
 
-* `run_simulation(sim_param, num_sims, percentage_step, plot_FVL_only)`
+* `run_simulation(sim_param, sim_type="", num_sims, percentage_step, plot_FVL_only)`
 
-  * Runs sensitivity analysis by varying one model parameter. Note: This function only simulates based on the currently active default model, ignoring previously supported `excitation_type` settings.
+  * Runs sensitivity analysis by varying one model parameter.
+  * sim_param: the model parameter to vary (e.g., 'zeta').
+  * sim_type: (string) optional identifier for simulation type (internal use).
+  * num_sims: number of simulation runs.
+  * percentage_step: percentage change for each simulation step.
+  * plot_FVL_only: (bool) when True, only the FVL is plotted.
+  * Note: This function only simulates based on the currently active default model; earlier `excitation_type` or `sim_type` options do not alter behavior.
 
 * `calc_FEV1_FVC()`
 
@@ -118,7 +125,7 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 
 * `plot_model(only_FVL, add_title_text)`
 
-  * Plots comparison between actual and simulated flow/volume signals
+  * Plots comparison between actual and simulated flow/volume signals.
 
 ---
 
@@ -149,9 +156,12 @@ af = spiro_features_extraction.areaFE(volume, flow, sex=1, age=35, height=170)
 area_pred = af.calc_AreaPred()
 area_actual = af.calc_areaFE()
 
-# Fit balloon model
+# Fit balloon model with a custom title
 db = spiro_features_extraction.deflating_baloon(time, volume, flow)
-db.run_model(excitation_type="", plot_model=True) # Excitation type now defaults to initial conditions at PEF
+db.run_model(excitation_type="", plot_model=True, add_title_text="Patient123")
+
+# Sensitivity simulation
+# db.run_simulation(sim_param='zeta', sim_type='', num_sims=4, percentage_step=10, plot_FVL_only=True)
 ```
 
 ---
