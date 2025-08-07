@@ -1,5 +1,3 @@
-# Documentation: `spiro_features_extraction`
-
 The `spiro_features_extraction` class provides a modular architecture for extracting advanced mathematical features from forced expiratory (FE) spirometry signals. It includes:
 
 * Area under the Flow-Volume Loop (% predicted)
@@ -60,7 +58,8 @@ ac = spiro_features_extraction.angle_of_collapse(FE_volume, FE_flow)
 
 * `min_line_model_error(plotProcess=False)`
 
-  * Loops through all post-PEF points to find best-fitting point minimizing squared error. Set `plotProcess=True` to visualize the fitting process.
+  * Loops through all post-PEF points to find best-fitting point minimizing squared error. 
+  Set `plotProcess=True` to visualize the fitting process.
 
 * `get_angle(x_p, y_p)`
 
@@ -68,7 +67,8 @@ ac = spiro_features_extraction.angle_of_collapse(FE_volume, FE_flow)
 
 * `calc_AC(plotModel=False, plotProcess=False)`
 
-  * Returns computed angle of collapse and squared error. Set `plotModel=True` to plot the fitted model, and `plotProcess=True` to visualize the fitting process.
+  * Returns computed angle of collapse and squared error. 
+  Set `plotModel=True` to plot the fitted model, and `plotProcess=True` to visualize the fitting process.
 
 ---
 
@@ -104,13 +104,15 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 
   * Computes error between predicted and actual volume/flow to be minimized
 
-* `run_model(excitation_type="", plot_model=False, ...)`
+* `run_model(excitation_type="", plot_model=False, add_title_text=None)`
 
-  * Fits model using `differential_evolution` optimizer and plots results. Note: The `excitation_type` parameter is now primarily for internal tracking; only the 'Default' behavior (initial conditions from PEF) is actively modeled.
+  * Fits model using `differential_evolution` optimizer and plots results. 
+  Note: The `excitation_type` parameter for run_model is now primarily for internal tracking; only the 'Default' behavior (initial conditions from PEF) is actively modeled.
 
-* `run_simulation(sim_param, num_sims, percentage_step, plot_FVL_only)`
+* `run_simulation(sim_param, sim_type="", num_sims, percentage_step, plot_FVL_only)`
 
-  * Runs sensitivity analysis by varying one model parameter. Note: This function only simulates based on the currently active default model, ignoring previously supported `excitation_type` settings.
+  * Runs sensitivity analysis by varying one model parameter. 
+  Note: This function only simulates based on the current default model, ignoring previously supported `excitation_type` settings.
 
 * `calc_FEV1_FVC()`
 
@@ -119,6 +121,17 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 * `plot_model(only_FVL, add_title_text)`
 
   * Plots comparison between actual and simulated flow/volume signals
+
+#### Attributes (post-fitting)
+
+After calling `run_model()`, the following attributes are available on the `deflating_baloon` instance:
+
+* `wn`         : coefficient of combined elastic recoil and pleural pressure
+* `zeta`      : dimensionless coefficient indicating small airway resistance
+* `R2_volume` : R² score for volume fit
+* `R2_flow`   : R² score for flow fit
+* `mse_volume`: Mean squared error for volume
+* `mse_flow`  : Mean squared error for flow
 
 ---
 
@@ -151,28 +164,13 @@ area_actual = af.calc_areaFE()
 
 # Fit balloon model
 db = spiro_features_extraction.deflating_baloon(time, volume, flow)
-db.run_model(excitation_type="", plot_model=True) # Excitation type now defaults to initial conditions at PEF
+db.run_model(excitation_type="", plot_model=True, add_title_text="SubjectID")  # Title shown on plot
+
+# Extract model parameters and performance
+wn    = db.wn
+zeta  = db.zeta
+R2_v  = db.R2_volume
+R2_f  = db.R2_flow
+mse_v = db.mse_volume
+mse_f = db.mse_flow
 ```
-
----
-
-## Dependencies
-
-* `numpy`
-* `matplotlib.pyplot`
-* `scipy.optimize.differential_evolution`
-* `sklearn.metrics`
-* `utilities` (custom plotting utility used inside `angle_of_collapse`)
-
----
-
-## References
-
-* AreaFE: [DOI:10.2147/COPD.S51453](https://www.dovepress.com/area-under-the-forced-expiratory-flow-volume-loop-in-spirometry-indica-peer-reviewed-fulltext-article-COPD)
-* Angle of Collapse: [DOI:10.1186/1465-9921-14-131](https://respiratory-research.biomedcentral.com/articles/10.1186/1465-9921-14-131)
-
----
-
-## Licensing
-
-This tool is intended for research and educational purposes. Ensure clinical validation before diagnostic use.
