@@ -1,9 +1,8 @@
 target:
   - url: "docs"
-  - url: "examples"
-  - url: "README.md"
 
-reinit: "a"
+
+reinit: "gg"
 
 include:
   - "spirolib"
