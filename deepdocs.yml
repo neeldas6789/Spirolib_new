@@ -3,7 +3,7 @@ target:
   - url: "examples"
 
 
-reinit: "a"
+reinit: "dsd"
 
 include:
   - "spirolib"
