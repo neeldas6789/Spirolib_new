@@ -2,7 +2,7 @@ target:
   - url: "docs"
 
 
-reinit: "gg"
+reinit: "a"
 
 include:
   - "spirolib"
