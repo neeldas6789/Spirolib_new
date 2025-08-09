@@ -1,4 +1,4 @@
-# Documentation: `spiro_features_extraction`
+# `spiro_features_extraction` Documentation
 
 The `spiro_features_extraction` class provides a modular architecture for extracting advanced mathematical features from forced expiratory (FE) spirometry signals. It includes:
 
@@ -33,10 +33,10 @@ area = spiro_features_extraction.areaFE(FE_volume, FE_flow, sex, age, height)
 #### Methods
 
 * `calc_AreaPred()`  
-  * Returns predicted AreaFE using demographic inputs.
+  Returns predicted AreaFE using demographic inputs.
 
 * `calc_areaFE()`  
-  * Computes area under the FE curve using trapezoidal integration.
+  Computes area under the FE curve using trapezoidal integration.
 
 ---
 
@@ -53,16 +53,16 @@ ac = spiro_features_extraction.angle_of_collapse(FE_volume, FE_flow)
 #### Methods
 
 * `generate_linemodel(x, y, index)`  
-  * Constructs a piecewise linear model intersecting point `(x, y)`
+  Constructs a piecewise linear model intersecting point `(x, y)`.
 
 * `min_line_model_error(plotProcess=False)`  
-  * Loops through all post-PEF points to find best-fitting point minimizing squared error. Set `plotProcess=True` to visualize the fitting process.
+  Loops through all post-PEF points to find best-fitting point minimizing squared error. Set `plotProcess=True` to visualize the fitting process.
 
 * `get_angle(x_p, y_p)`  
-  * Computes the geometric angle between two segments joined at `(x_p, y_p)`
+  Computes the geometric angle between two segments joined at `(x_p, y_p)`.
 
 * `calc_AC(plotModel=False, plotProcess=False)`  
-  * Returns computed angle of collapse and squared error. Set `plotModel=True` to plot the fitted model, and `plotProcess=True` to visualize the fitting process.
+  Returns computed angle of collapse and squared error. Set `plotModel=True` to plot the fitted model, and `plotProcess=True` to visualize the fitting process.
 
 ---
 
@@ -79,44 +79,44 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 #### Core Methods
 
 * `orient_and_snip_signal()`  
-  * Prepares volume/flow signals for modeling by standardizing orientation
+  Prepares volume/flow signals for modeling by standardizing orientation.
 
 * `reorient_model()`  
-  * Reverts simulated signal to original coordinate system
+  Reverts simulated signal to original coordinate system.
 
 * `get_excitation_phase(T1, params)`  
-  * Internally handles the early phase of expiration (excitation) based on selected model parameters.
+  Handles the early phase of expiration (excitation) based on selected model parameters.
 
 * `calc_hypothesis(params)`  
-  * Simulates the flow-volume signal using the chosen model and parameters
+  Simulates the flow-volume signal using the chosen model and parameters.
 
 * `Cost_Function(params)`  
-  * Computes error between predicted and actual volume/flow to be minimized
+  Computes error between predicted and actual volume/flow to be minimized.
 
 * `run_model(excitation_type, plot_model=False, add_title_text="", plot_FVL_only=False)`  
-  * Fits model using `differential_evolution` optimizer and plots results. Supports `excitation_type` values:
-    - `"Linear"`: linear excitation start (deprecated/discarded)
-    - `"Exponential pressure"`: exponential pressure model (deprecated/discarded)
-    - `"Non linear"`: non-linear excitation model
-    - `""` (default): uses initial conditions at PEF
+  Fits model using `differential_evolution` optimizer and plots results. Supports `excitation_type` values:
+  - `"Linear"`: linear excitation start (deprecated)
+  - `"Exponential pressure"`: exponential pressure model (deprecated)
+  - `"Non linear"`: non-linear excitation model
+  - `""` (default): uses initial conditions at PEF
 
 * `run_simulation(sim_param, sim_type, num_sims, percentage_step, plot_FVL_only)`  
-  * Runs sensitivity analysis by varying one model parameter
+  Runs sensitivity analysis by varying one model parameter.
 
 * `calc_FEV1_FVC()`  
-  * Computes interpolated FEV1 and final FVC from model output
+  Computes interpolated FEV1 and final FVC from model output.
 
 * `plot_model(only_FVL, add_title_text)`  
-  * Plots comparison between actual and simulated flow/volume signals
+  Plots comparison between actual and simulated flow/volume signals.
 
 ---
 
 ## Excitation Types
 
-The `run_model` method now supports multiple `excitation_type` options:
+The `run_model` method supports multiple `excitation_type` options:
 
-* `"Linear"`: legacy linear excitation (module still present but rarely used)
-* `"Exponential pressure"`: legacy exponential model (module still present but rarely used)
+* `"Linear"`: legacy linear excitation (module still present)
+* `"Exponential pressure"`: legacy exponential model (module still present)
 * `"Non linear"`: active non-linear excitation modeling
 * `""` (default): employs initial conditions at PEF for deflation modeling
 
@@ -157,7 +157,7 @@ db.run_model(excitation_type="", plot_model=True)  # choose excitation_type as n
 * `numpy`
 * `matplotlib.pyplot`
 * `scipy.optimize.differential_evolution`
-* `sklearn.metrics`
+* `sklearn.metrics` (for MSE and R²)
 * `utilities` (custom plotting utility used inside `angle_of_collapse`)
 
 ---
