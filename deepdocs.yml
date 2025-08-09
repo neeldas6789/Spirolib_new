@@ -1,7 +1,5 @@
 target:
-  - url: "docs"
-  - url: "examples"
-
+  - url: "https://github.com/neeldas6789/Spirolib_docs/tree/main/docs"
 
 reinit: "dsd"
 
