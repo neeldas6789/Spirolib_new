@@ -1,4 +1,4 @@
-# Documentation: `spiro_features_extraction`
+# spiro_features_extraction
 
 The `spiro_features_extraction` class provides a modular architecture for extracting advanced mathematical features from forced expiratory (FE) spirometry signals. It includes:
 
@@ -94,7 +94,7 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 
 * `get_excitation_phase(T1, params)`
 
-  * Internally handles the early phase of expiration (excitation) based on default initial conditions.
+  * Internally handles the early phase of expiration based on default initial conditions.
 
 * `calc_hypothesis(params)`
 
@@ -104,13 +104,13 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 
   * Computes error between predicted and actual volume/flow to be minimized
 
-* `run_model(excitation_type="", plot_model=False, ...)`
+* `run_model(excitation_type, plot_model=False, ...)`
 
-  * Fits model using `differential_evolution` optimizer and plots results. Note: The `excitation_type` parameter is now primarily for internal tracking; only the 'Default' behavior (initial conditions from PEF) is actively modeled.
+  * Fits model using `differential_evolution` optimizer and plots results. The `excitation_type` parameter is retained for classification; the default model uses PEF-based initial conditions.
 
 * `run_simulation(sim_param, num_sims, percentage_step, plot_FVL_only)`
 
-  * Runs sensitivity analysis by varying one model parameter. Note: This function only simulates based on the currently active default model, ignoring previously supported `excitation_type` settings.
+  * Runs sensitivity analysis by varying one model parameter on the fitted default model.
 
 * `calc_FEV1_FVC()`
 
@@ -122,15 +122,9 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 
 ---
 
-## Excitation Types
+## Optimization & Metrics
 
-Previous `excitation_type` options (`Linear`, `Exponential pressure`, `Non linear`) are no longer actively modeled. The `run_model` method now defaults to a single internal mechanism that uses initial conditions (volume and flow at PEF) for the deflation phase. The `excitation_type` parameter can still be passed but primarily serves for internal classification rather than altering model behavior.
-
----
-
-## Optimization Notes
-
-All modeling is done via `scipy.optimize.differential_evolution`. Fit metrics include:
+All modeling uses `scipy.optimize.differential_evolution`. Fit metrics available:
 
 * Mean Squared Error (MSE)
 * R² Score (flow and volume)
@@ -151,7 +145,7 @@ area_actual = af.calc_areaFE()
 
 # Fit balloon model
 db = spiro_features_extraction.deflating_baloon(time, volume, flow)
-db.run_model(excitation_type="", plot_model=True) # Excitation type now defaults to initial conditions at PEF
+db.run_model(excitation_type="", plot_model=True)
 ```
 
 ---
@@ -162,7 +156,7 @@ db.run_model(excitation_type="", plot_model=True) # Excitation type now defaults
 * `matplotlib.pyplot`
 * `scipy.optimize.differential_evolution`
 * `sklearn.metrics`
-* `utilities` (custom plotting utility used inside `angle_of_collapse`)
+* `utilities` (internal plotting)
 
 ---
 
@@ -170,9 +164,3 @@ db.run_model(excitation_type="", plot_model=True) # Excitation type now defaults
 
 * AreaFE: [DOI:10.2147/COPD.S51453](https://www.dovepress.com/area-under-the-forced-expiratory-flow-volume-loop-in-spirometry-indica-peer-reviewed-fulltext-article-COPD)
 * Angle of Collapse: [DOI:10.1186/1465-9921-14-131](https://respiratory-research.biomedcentral.com/articles/10.1186/1465-9921-14-131)
-
----
-
-## Licensing
-
-This tool is intended for research and educational purposes. Ensure clinical validation before diagnostic use.
