@@ -1,7 +1,7 @@
 target:
   - url: "docs"
 
-reinit: "x"
+reinit: "a"
 
 include:
   - "spirolib"
