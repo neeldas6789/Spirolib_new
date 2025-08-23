@@ -5,7 +5,7 @@ The `spiro_signal_process` class provides tools to analyze spirometry data, part
 ## Class Initialization
 
 ```python
-sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_signal_is_FE)
+sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_signal_is_FE, scale2)
 ```
 
 ### Parameters
@@ -16,6 +16,7 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 * `patientID`: Unique identifier for the patient
 * `trialID`: Identifier for the trial
 * `flag_given_signal_is_FE`: Boolean flag indicating if the signal is forced expiration only
+* `scale2`: Numeric scaling factor applied twice to the input time values to accommodate different sampling rates
 
 ---
 
@@ -33,7 +34,7 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
 * `manual_trim(begin_time=0, end_time=None)`
 
-  * Trims the signal between the given time bounds
+  * Trims the signal between the given time bounds while preserving continuity at the borders
 
 ### Plotting
 
@@ -61,6 +62,18 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
   * Identifies the index corresponding to Peak Expiratory Flow (PEF)
 
+* `backExtrapolate_FEstart()`
+
+  * Uses back-extrapolation to determine FE start and validate BEV criteria
+
+* `threshPEF_FEstart(thresh_percent_begin)`
+
+  * Uses PEF threshold to identify FE start
+
+* `trim_FE_end(thresh_percent_end)`
+
+  * Uses PEF threshold to identify FE end
+
 * `get_FE_start_end(...)`
 
   * Determines the indices corresponding to the start and end of forced expiration
@@ -73,21 +86,11 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
 * `get_FE_signal(start_type=None, thresh_percent_begin=2, thresh_percent_end=0.25, plot=False)`
 
-  * Returns FE segment (time, volume, flow) and optionally plots it. For `BEV` or `thresh_PEF` `start_type`, the output signals will be padded so flow and volume start/end at zero.
+  * Returns FE segment (time, volume, flow) and optionally plots it. For `BEV` or `thresh_PEF` `start_type`, the output signals are padded so flow and volume start/end at zero.
 
 ### Trimming & Thresholding
 
-* `backExtrapolate_FEstart()`
-
-  * Uses back-extrapolation to determine FE start and validate BEV criteria
-
-* `threshPEF_FEstart(thresh_percent_begin)`
-
-  * Uses PEF threshold to identify FE start
-
-* `trim_FE_end(thresh_percent_end)`
-
-  * Uses PEF threshold to identify FE end
+* See methods above under Index Detection
 
 ### Acceptability Checks
 
@@ -101,7 +104,7 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
 * `check_acceptability_of_spirogram(min_FE_time=6, thresh_percent_end=0.5)`
 
-  * Evaluates acceptability of the spirometry signal. Can now also reject signals if BEV criteria are not met.
+  * Evaluates acceptability of the spirometry signal and finalizes FE indices if accepted
 
 ### Spirometry Parameter Computation
 
@@ -134,19 +137,10 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
 ---
 
-## Notes
-
-* It is important to run `correct_data_positioning()` and `standerdize_units()` before performing calculations or acceptability checks
-* Plotting methods help visualize raw and processed signals for verification
-* ECCS93 reference computations depend on gender, age, and height
-* All array attributes are assumed to be NumPy arrays internally
-
----
-
 ## Example Workflow
 
 ```python
-sp = spiro_signal_process(time, volume, flow, patientID='P1', trialID='T1', flag_given_signal_is_FE=False)
+sp = spiro_signal_process(time, volume, flow, patientID='P1', trialID='T1', flag_given_signal_is_FE=False, scale2=1.0)
 sp.correct_data_positioning()
 sp.standerdize_units()
 accepted, reason = sp.check_acceptability_of_spirogram()
