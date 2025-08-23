@@ -5,7 +5,7 @@ The `spiro_signal_process` class provides tools to analyze spirometry data, part
 ## Class Initialization
 
 ```python
-sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_signal_is_FE)
+sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_signal_is_FE, scale1)
 ```
 
 ### Parameters
@@ -16,6 +16,7 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 * `patientID`: Unique identifier for the patient
 * `trialID`: Identifier for the trial
 * `flag_given_signal_is_FE`: Boolean flag indicating if the signal is forced expiration only
+* `scale1`: Multiplicative factor to convert input `time` to seconds (e.g., `1e-3` if input time is in milliseconds)
 
 ---
 
@@ -134,19 +135,11 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
 ---
 
-## Notes
-
-* It is important to run `correct_data_positioning()` and `standerdize_units()` before performing calculations or acceptability checks
-* Plotting methods help visualize raw and processed signals for verification
-* ECCS93 reference computations depend on gender, age, and height
-* All array attributes are assumed to be NumPy arrays internally
-
----
-
 ## Example Workflow
 
 ```python
-sp = spiro_signal_process(time, volume, flow, patientID='P1', trialID='T1', flag_given_signal_is_FE=False)
+# If input time is already in seconds, set scale1=1
+sp = spiro_signal_process(time, volume, flow, patientID='P1', trialID='T1', flag_given_signal_is_FE=False, scale1=1)
 sp.correct_data_positioning()
 sp.standerdize_units()
 accepted, reason = sp.check_acceptability_of_spirogram()
