@@ -24,16 +24,20 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 ### Data Preprocessing
 
 * `correct_data_positioning(flip_vol=False, flip_flow=False)`
-
+  
   * Ensures signal orientation is standard (expiratory FVL right skewed and PEF positive)
 
 * `standerdize_units()`
-
+  
   * Converts all input data units to litres and seconds
 
 * `manual_trim(begin_time=0, end_time=None)`
-
+  
   * Trims the signal between the given time bounds
+
+* `shift_TLC_to_orgin()`
+  
+  * Shifts the Total Lung Capacity (TLC) to the origin by subtracting the volume at the FE start index. Must be called after FE indexes (`index1`) are computed, or it will print an error.
 
 ### Plotting
 
@@ -48,7 +52,7 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
   * Implements low-pass filtering using Butterworth filters
 
 * `smooth_FVL_start(time, vol, flow)`
-
+  
   * Smoothens the FVL at the start of FE for better shape quality
 
 ### Index Detection
@@ -124,22 +128,6 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 * `finalize_signal(sex=None, age=None, height=None)`
 
   * Finalizes signal after processing and calculates all flow/volume metrics and predicted values. If not already set, `index1` and `index2` (start/end of FE) will be determined during this step.
-
-### Internal Attributes (Post-finalization)
-
-* `FEV1`, `FVC`, `Tiff`, `PEF`, `FEF25`, `FEF50`, `FEF75`, `FEF25_75`
-* Reference prediction percentages: `FEV1_PerPred`, `FVC_PerPred`, etc.
-* `index1`, `index2`: Start and end indices of FE segment
-* `signal_finalized`: Flag indicating processing completion
-
----
-
-## Notes
-
-* It is important to run `correct_data_positioning()` and `standerdize_units()` before performing calculations or acceptability checks
-* Plotting methods help visualize raw and processed signals for verification
-* ECCS93 reference computations depend on gender, age, and height
-* All array attributes are assumed to be NumPy arrays internally
 
 ---
 
