@@ -35,11 +35,15 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
   * Trims the signal between the given time bounds
 
+---
+
 ### Plotting
 
 * `plotFVL(only_FVL=False, show_ID=True, add_text="", only_FE=False, color='black', dpi=100, figsize=None, grid_on=True)`
 
   * Plots the flow-volume loop (FVL) or time-series representations of volume and flow
+
+---
 
 ### Signal Processing Helpers
 
@@ -50,6 +54,8 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 * `smooth_FVL_start(time, vol, flow)`
 
   * Smoothens the FVL at the start of FE for better shape quality
+
+---
 
 ### Index Detection
 
@@ -69,11 +75,15 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
   * Gets the start index of forced inspiration (for combined FI-FE signals)
 
+---
+
 ### FE Signal Extraction
 
 * `get_FE_signal(start_type=None, thresh_percent_begin=2, thresh_percent_end=0.25, plot=False)`
 
   * Returns FE segment (time, volume, flow) and optionally plots it. For `BEV` or `thresh_PEF` `start_type`, the output signals will be padded so flow and volume start/end at zero.
+
+---
 
 ### Trimming & Thresholding
 
@@ -89,6 +99,8 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
   * Uses PEF threshold to identify FE end
 
+---
+
 ### Acceptability Checks
 
 * `check_rise_to_PEF()`
@@ -103,6 +115,8 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
   * Evaluates acceptability of the spirometry signal. Can now also reject signals if BEV criteria are not met.
 
+---
+
 ### Spirometry Parameter Computation
 
 * `calc_FEV1_FVC()`
@@ -113,19 +127,27 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
   * Computes PEF, FEF25, FEF50, FEF75, and FEF25-75
 
+---
+
 ### Reference Prediction (ECCS93)
 
 * `calc_ECCS93_ref(param)`
 
   * Returns predicted reference value for a given parameter using ECCS93 formulas
 
+---
+
 ### Finalization
 
 * `finalize_signal(sex=None, age=None, height=None)`
 
-  * Finalizes signal after processing and calculates all flow/volume metrics and predicted values. If not already set, `index1` and `index2` (start/end of FE) will be determined during this step.
+  * Called only after acceptability is confirmed. Internally invokes `shift_TLC_to_orgin()` to align volume so that FE start is at zero.
+  * Calculates and stores FEV1, FVC, PEF, flow parameters, and reference percentages if demographic inputs are provided.
+  * Sets `signal_finalized=True`.
 
-### Internal Attributes (Post-finalization)
+---
+
+## Internal Attributes (Post-finalization)
 
 * `FEV1`, `FVC`, `Tiff`, `PEF`, `FEF25`, `FEF50`, `FEF75`, `FEF25_75`
 * Reference prediction percentages: `FEV1_PerPred`, `FVC_PerPred`, etc.
@@ -134,19 +156,13 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
 ---
 
-## Notes
-
-* It is important to run `correct_data_positioning()` and `standerdize_units()` before performing calculations or acceptability checks
-* Plotting methods help visualize raw and processed signals for verification
-* ECCS93 reference computations depend on gender, age, and height
-* All array attributes are assumed to be NumPy arrays internally
-
----
-
 ## Example Workflow
 
 ```python
-sp = spiro_signal_process(time, volume, flow, patientID='P1', trialID='T1', flag_given_signal_is_FE=False)
+sp = spiro_signal_process(
+    time, volume, flow,
+    patientID='P1', trialID='T1', flag_given_signal_is_FE=False
+)
 sp.correct_data_positioning()
 sp.standerdize_units()
 accepted, reason = sp.check_acceptability_of_spirogram()
@@ -164,10 +180,4 @@ if accepted:
 * `scipy.signal.butter`, `scipy.signal.lfilter`
 * `peakutils`
 
-Make sure these libraries are installed before using the class.
-
----
-
-## Licensing
-
-This module is intended for educational and research purposes. If used clinically or commercially, ensure proper validation and compliance with medical device regulations.
+Ensure these libraries are installed before using the class.

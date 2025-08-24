@@ -94,27 +94,31 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 
 * `get_excitation_phase(T1, params)`
 
-  * Internally handles the early phase of expiration (excitation) based on default initial conditions.
+  * Handles the early (excitation) phase of expiration based on initial conditions
 
 * `calc_hypothesis(params)`
 
-  * Simulates the flow-volume signal using the selected model and parameters
+  * Simulates the flow-volume signal using provided parameters
 
 * `Cost_Function(params)`
 
-  * Computes error between predicted and actual volume/flow to be minimized
+  * Computes the error between predicted and actual volume/flow to be minimized
 
-* `run_model(excitation_type="", plot_model=False, ...)`
+* `run_model(excitation_type, plot_model=False, add_title_text="", plot_FVL_only=False)`
 
-  * Fits model using `differential_evolution` optimizer and plots results. Note: The `excitation_type` parameter is now primarily for internal tracking; only the 'Default' behavior (initial conditions from PEF) is actively modeled.
+  * Fits the model using `differential_evolution`. Supported `excitation_type` values:
+    * `"Linear"`, `"Exponential pressure"`, `"Non linear"` for specialized excitation-phase modeling
+    * Any other string (default) uses PEF-based initial conditions for the deflation phase
+  * `plot_model=True` overlays the fitted model on the original signals
 
-* `run_simulation(sim_param, num_sims, percentage_step, plot_FVL_only)`
+* `run_simulation(sim_param='zeta', sim_type='', num_sims=4, percentage_step=10, plot_FVL_only=True)`
 
-  * Runs sensitivity analysis by varying one model parameter. Note: This function only simulates based on the currently active default model, ignoring previously supported `excitation_type` settings.
+  * Performs sensitivity analysis by varying one parameter (`sim_param`) while holding others constant.
+  * `sim_type` can be set to match the original excitation model when supported.
 
 * `calc_FEV1_FVC()`
 
-  * Computes interpolated FEV1 and final FVC from model output
+  * Computes interpolated FEV1 and final FVC from the simulated output
 
 * `plot_model(only_FVL, add_title_text)`
 
@@ -124,13 +128,18 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 
 ## Excitation Types
 
-Previous `excitation_type` options (`Linear`, `Exponential pressure`, `Non linear`) are no longer actively modeled. The `run_model` method now defaults to a single internal mechanism that uses initial conditions (volume and flow at PEF) for the deflation phase. The `excitation_type` parameter can still be passed but primarily serves for internal classification rather than altering model behavior.
+You can select how the initial phase of expiration is modeled via the `excitation_type` parameter in `run_model`:
+
+* `"Linear"`: Assumes a linear increase of flow to PEF
+* `"Exponential pressure"`: Models exponential pressure-driven excitation
+* `"Non linear"`: Uses a non-linear excitation curve
+* Default (any other string): Uses volume and flow at PEF as initial conditions and only models the deflation phase
 
 ---
 
 ## Optimization Notes
 
-All modeling is done via `scipy.optimize.differential_evolution`. Fit metrics include:
+All modeling is performed via `scipy.optimize.differential_evolution`. Fit metrics include:
 
 * Mean Squared Error (MSE)
 * R² Score (flow and volume)
@@ -149,9 +158,11 @@ af = spiro_features_extraction.areaFE(volume, flow, sex=1, age=35, height=170)
 area_pred = af.calc_AreaPred()
 area_actual = af.calc_areaFE()
 
-# Fit balloon model
+# Fit balloon model with non-linear excitation
 db = spiro_features_extraction.deflating_baloon(time, volume, flow)
-db.run_model(excitation_type="", plot_model=True) # Excitation type now defaults to initial conditions at PEF
+db.run_model(excitation_type="Non linear", plot_model=True)
+# Run sensitivity analysis
+db.run_simulation(sim_param='omega', num_sims=5, percentage_step=5)
 ```
 
 ---
@@ -163,6 +174,8 @@ db.run_model(excitation_type="", plot_model=True) # Excitation type now defaults
 * `scipy.optimize.differential_evolution`
 * `sklearn.metrics`
 * `utilities` (custom plotting utility used inside `angle_of_collapse`)
+
+Ensure these libraries are installed before use.
 
 ---
 
