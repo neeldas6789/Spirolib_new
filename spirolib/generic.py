@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generic Python Script Template Hello 
+Generic Python Script Template Hello World
 Author: Your Name
 Description: A starter template for Python scripts.
 """
