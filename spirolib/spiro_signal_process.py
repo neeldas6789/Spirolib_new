@@ -12,7 +12,7 @@ from scipy.signal import butter, lfilter
 # Important: consistently followed: index0= start of FI, index1 =start of FE, index2=end of FE
 
 class spiro_signal_process:
-    def __init__(self,time,volume,flow,patientID,trialID, flag_given_signal_is_FE, scale7):
+    def __init__(self,time,volume,flow,patientID,trialID, flag_given_signal_is_FE, scale8):
         '''
         Class initialization
         Requires: 
