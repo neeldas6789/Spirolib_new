@@ -12,7 +12,7 @@ from scipy.signal import butter, lfilter
 # Important: consistently followed: index0= start of FI, index1 =start of FE, index2=end of FE
 
 class spiro_signal_process:
-    def __init__(self,time,volume,flow,patientID,trialID, flag_given_signal_is_FE, scale9):
+    def __init__(self,time,volume,flow,patientID,trialID, flag_given_signal_is_FE, scale10):
         '''
         Class initialization
         Requires: 
@@ -24,7 +24,7 @@ class spiro_signal_process:
         6. flag_given_signal_is_FE : whether the given signal is forced expiration only (type: Boolean-True/False, to be determined by user)
         Note: The flow-volume data should be prefarably arranged such that the expiratory flow-volume loop is right skewed and PEF is positive
         '''
-        scale= scale9
+        scale= scale10
         self.time=np.array(time)*scale
         self.volume=np.array(volume)
         self.flow=np.array(flow)
