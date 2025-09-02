@@ -5,7 +5,7 @@ The `spiro_signal_process` class provides tools to analyze spirometry data, part
 ## Class Initialization
 
 ```python
-sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_signal_is_FE)
+sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_signal_is_FE, scale6)
 ```
 
 ### Parameters
@@ -16,9 +16,9 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 * `patientID`: Unique identifier for the patient
 * `trialID`: Identifier for the trial
 * `flag_given_signal_is_FE`: Boolean flag indicating if the signal is forced expiration only
+* `scale6`: Scale factor applied to the input `time` values (e.g., if input time is in milliseconds, use `scale6=0.001` to convert to seconds)
 
 ---
-
 ## Core Methods
 
 ### Data Preprocessing
@@ -133,7 +133,6 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 * `signal_finalized`: Flag indicating processing completion
 
 ---
-
 ## Notes
 
 * It is important to run `correct_data_positioning()` and `standerdize_units()` before performing calculations or acceptability checks
@@ -142,11 +141,10 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 * All array attributes are assumed to be NumPy arrays internally
 
 ---
-
 ## Example Workflow
 
 ```python
-sp = spiro_signal_process(time, volume, flow, patientID='P1', trialID='T1', flag_given_signal_is_FE=False)
+sp = spiro_signal_process(time, volume, flow, patientID='P1', trialID='T1', flag_given_signal_is_FE=False, scale6=1)
 sp.correct_data_positioning()
 sp.standerdize_units()
 accepted, reason = sp.check_acceptability_of_spirogram()
@@ -156,7 +154,6 @@ if accepted:
 ```
 
 ---
-
 ## Dependencies
 
 * `numpy`
@@ -167,7 +164,6 @@ if accepted:
 Make sure these libraries are installed before using the class.
 
 ---
-
 ## Licensing
 
 This module is intended for educational and research purposes. If used clinically or commercially, ensure proper validation and compliance with medical device regulations.
