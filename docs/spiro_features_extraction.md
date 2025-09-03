@@ -74,7 +74,7 @@ ac = spiro_features_extraction.angle_of_collapse(FE_volume, FE_flow)
 
 ### Subclass: `deflating_baloon`
 
-Models the FE signal using second-order ODE dynamics. Simulates the lungs as a deflating balloon.
+Models the FE signal using second-order ODE dynamics, simulating the lungs as a deflating balloon.
 
 #### Initialization
 
@@ -94,23 +94,28 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 
 * `get_excitation_phase(T1, params)`
 
-  * Internally handles the early phase of expiration (excitation) based on default initial conditions.
+  * Internally handles the early phase of expiration (excitation) based on model type.
 
 * `calc_hypothesis(params)`
 
-  * Simulates the flow-volume signal using the selected model and parameters
+  * Simulates the flow-volume signal using the selected model parameters.
 
 * `Cost_Function(params)`
 
-  * Computes error between predicted and actual volume/flow to be minimized
+  * Computes error between predicted and actual volume/flow to be minimized by the optimizer.
 
-* `run_model(excitation_type="", plot_model=False, ...)`
+* `run_model(excitation_type=None, plot_model=False, add_title_text="", plot_FVL_only=False)`
 
-  * Fits model using `differential_evolution` optimizer and plots results. Note: The `excitation_type` parameter is now primarily for internal tracking; only the 'Default' behavior (initial conditions from PEF) is actively modeled.
+  * Fits model using `scipy.optimize.differential_evolution` and plots results.
+  * `excitation_type` can be one of:
+    - `None` or `""`: default PEF-driven model (initial conditions at PEF)
+    - `"Linear"`: (experimental) linear rise to PEF
+    - `"Exponential pressure"`: (experimental) exponential pressure model
+    - `"Non linear"`: non-linear excitation model
 
-* `run_simulation(sim_param, num_sims, percentage_step, plot_FVL_only)`
+* `run_simulation(sim_param, num_sims=4, percentage_step=10, plot_FVL_only=True)`
 
-  * Runs sensitivity analysis by varying one model parameter. Note: This function only simulates based on the currently active default model, ignoring previously supported `excitation_type` settings.
+  * Runs sensitivity analysis by varying the specified model parameter (`"zeta"`, `"omega"`, or `"alpha"`) around its fitted value.
 
 * `calc_FEV1_FVC()`
 
@@ -124,7 +129,14 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 
 ## Excitation Types
 
-Previous `excitation_type` options (`Linear`, `Exponential pressure`, `Non linear`) are no longer actively modeled. The `run_model` method now defaults to a single internal mechanism that uses initial conditions (volume and flow at PEF) for the deflation phase. The `excitation_type` parameter can still be passed but primarily serves for internal classification rather than altering model behavior.
+The `deflating_baloon` model supports multiple `excitation_type` options:
+
+* `None` or empty string (default): Uses initial volume and flow at PEF for the deflation phase.
+* `Linear`: (experimental) models a linear increase in flow to PEF.
+* `Exponential pressure`: (experimental) models an exponential pressure-driven rise.
+* `Non linear`: models a non-linear excitation before deflation.
+
+Note: The `Linear` and `Exponential pressure` types are provided for legacy compatibility and may not be actively maintained.
 
 ---
 
@@ -149,10 +161,14 @@ af = spiro_features_extraction.areaFE(volume, flow, sex=1, age=35, height=170)
 area_pred = af.calc_AreaPred()
 area_actual = af.calc_areaFE()
 
-# Fit balloon model
+# Fit balloon model with default PEF-driven excitation
 db = spiro_features_extraction.deflating_baloon(time, volume, flow)
-db.run_model(excitation_type="", plot_model=True) # Excitation type now defaults to initial conditions at PEF
-```
+db.run_model(excitation_type=None, plot_model=True)
+
+# Fit using non-linear excitation
+db_nonlin = spiro_features_extraction.deflating_baloon(time, volume, flow)
+db_nonlin.run_model(excitation_type="Non linear", plot_model=True)
+```  
 
 ---
 

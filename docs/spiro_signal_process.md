@@ -5,7 +5,7 @@ The `spiro_signal_process` class provides tools to analyze spirometry data, part
 ## Class Initialization
 
 ```python
-sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_signal_is_FE)
+sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_signal_is_FE, scale0)
 ```
 
 ### Parameters
@@ -16,6 +16,9 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 * `patientID`: Unique identifier for the patient
 * `trialID`: Identifier for the trial
 * `flag_given_signal_is_FE`: Boolean flag indicating if the signal is forced expiration only
+* `scale0`: Scale factor applied to the `time` input (e.g., 1 for seconds, 1000 to convert ms to s). The internal time vector is computed as `np.array(time) * scale0`.
+
+Note: The `scale0` parameter was added to ensure consistent time units before further processing.
 
 ---
 
@@ -61,8 +64,7 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
   * Identifies the index corresponding to Peak Expiratory Flow (PEF)
 
-* `get_FE_start_end(...)`
-
+* `get_FE_start_end(...)`  
   * Determines the indices corresponding to the start and end of forced expiration
 
 * `get_FI_start(index1=None)`
@@ -101,7 +103,7 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
 * `check_acceptability_of_spirogram(min_FE_time=6, thresh_percent_end=0.5)`
 
-  * Evaluates acceptability of the spirometry signal. Can now also reject signals if BEV criteria are not met.
+  * Evaluates acceptability of the spirometry signal. Can reject signals if BEV criteria are not met.
 
 ### Spirometry Parameter Computation
 
@@ -125,35 +127,27 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
   * Finalizes signal after processing and calculates all flow/volume metrics and predicted values. If not already set, `index1` and `index2` (start/end of FE) will be determined during this step.
 
-### Internal Attributes (Post-finalization)
-
-* `FEV1`, `FVC`, `Tiff`, `PEF`, `FEF25`, `FEF50`, `FEF75`, `FEF25_75`
-* Reference prediction percentages: `FEV1_PerPred`, `FVC_PerPred`, etc.
-* `index1`, `index2`: Start and end indices of FE segment
-* `signal_finalized`: Flag indicating processing completion
-
----
-
-## Notes
-
-* It is important to run `correct_data_positioning()` and `standerdize_units()` before performing calculations or acceptability checks
-* Plotting methods help visualize raw and processed signals for verification
-* ECCS93 reference computations depend on gender, age, and height
-* All array attributes are assumed to be NumPy arrays internally
-
 ---
 
 ## Example Workflow
 
 ```python
-sp = spiro_signal_process(time, volume, flow, patientID='P1', trialID='T1', flag_given_signal_is_FE=False)
+sp = spiro_signal_process(
+    time,
+    volume,
+    flow,
+    patientID='P1',
+    trialID='T1',
+    flag_given_signal_is_FE=False,
+    scale0=1
+)
 sp.correct_data_positioning()
 sp.standerdize_units()
 accepted, reason = sp.check_acceptability_of_spirogram()
 if accepted:
     sp.finalize_signal(sex=1, age=35, height=175)
     print(sp.FEV1, sp.FVC, sp.PEF)
-```
+```  
 
 ---
 
