@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-A class to perform various operations on spirometry data signals.
+A class to perform various operations on spirometry data signals
 """
 
 import peakutils
