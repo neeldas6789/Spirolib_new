@@ -5,7 +5,16 @@ The `spiro_signal_process` class provides tools to analyze spirometry data, part
 ## Class Initialization
 
 ```python
-sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_signal_is_FE)
+# Note: `scale2` applies a multiplier to the time vector (e.g., to convert units).
+sp = spiro_signal_process(
+    time,
+    volume,
+    flow,
+    patientID,
+    trialID,
+    flag_given_signal_is_FE,
+    scale2
+)
 ```
 
 ### Parameters
@@ -16,6 +25,7 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 * `patientID`: Unique identifier for the patient
 * `trialID`: Identifier for the trial
 * `flag_given_signal_is_FE`: Boolean flag indicating if the signal is forced expiration only
+* `scale2`: Numeric factor to multiply the `time` values (e.g., to convert from ms to s or vice versa)
 
 ---
 
@@ -146,7 +156,15 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 ## Example Workflow
 
 ```python
-sp = spiro_signal_process(time, volume, flow, patientID='P1', trialID='T1', flag_given_signal_is_FE=False)
+sp = spiro_signal_process(
+    time,
+    volume,
+    flow,
+    patientID='P1',
+    trialID='T1',
+    flag_given_signal_is_FE=False,
+    scale2=1.0
+)
 sp.correct_data_positioning()
 sp.standerdize_units()
 accepted, reason = sp.check_acceptability_of_spirogram()
