@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Class for extracting features from spirometry signals using mathematical models.
+Class for extracting features from spirometry signals using mathematical models
 """
 
 import numpy as np
