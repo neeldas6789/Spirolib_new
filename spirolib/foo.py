@@ -1,4 +1,4 @@
 def foo():
   x=1
-  y=2
+  y=x+1
   pass
