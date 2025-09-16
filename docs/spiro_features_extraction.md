@@ -94,7 +94,7 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 
 * `get_excitation_phase(T1, params)`
 
-  * Internally handles the early phase of expiration (excitation) based on default initial conditions.
+  * Handles the early (excitation) phase of expiration based on specified excitation parameters.
 
 * `calc_hypothesis(params)`
 
@@ -104,13 +104,13 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 
   * Computes error between predicted and actual volume/flow to be minimized
 
-* `run_model(excitation_type="", plot_model=False, ...)`
+* `run_model(excitation_type, plot_model=False, add_title_text="", plot_FVL_only=False)`
 
-  * Fits model using `differential_evolution` optimizer and plots results. Note: The `excitation_type` parameter is now primarily for internal tracking; only the 'Default' behavior (initial conditions from PEF) is actively modeled.
+  * Fits model using `differential_evolution` optimizer and plots results. Accepts one of the supported `excitation_type` values (see below).
 
 * `run_simulation(sim_param, num_sims, percentage_step, plot_FVL_only)`
 
-  * Runs sensitivity analysis by varying one model parameter. Note: This function only simulates based on the currently active default model, ignoring previously supported `excitation_type` settings.
+  * Runs sensitivity analysis by varying one model parameter.
 
 * `calc_FEV1_FVC()`
 
@@ -124,7 +124,14 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 
 ## Excitation Types
 
-Previous `excitation_type` options (`Linear`, `Exponential pressure`, `Non linear`) are no longer actively modeled. The `run_model` method now defaults to a single internal mechanism that uses initial conditions (volume and flow at PEF) for the deflation phase. The `excitation_type` parameter can still be passed but primarily serves for internal classification rather than altering model behavior.
+The `excitation_type` parameter accepts one of the following options:
+
+* `"Linear"`: Experimental/discarded linear excitation modeling
+* `"Exponential pressure"`: Experimental/discarded exponential excitation modeling
+* `"Non linear"`: Experimental/discarded nonlinear excitation modeling
+* `""` (default): Uses initial conditions at PEF to model the deflation phase
+
+Based on the chosen excitation type, `run_model` applies the corresponding optimization routine. Note that Linear and Exponential pressure models are provided for legacy support and may not be fully maintained.
 
 ---
 
@@ -149,9 +156,9 @@ af = spiro_features_extraction.areaFE(volume, flow, sex=1, age=35, height=170)
 area_pred = af.calc_AreaPred()
 area_actual = af.calc_areaFE()
 
-# Fit balloon model
+# Fit balloon model with default excitation (initial conditions at PEF)
 db = spiro_features_extraction.deflating_baloon(time, volume, flow)
-db.run_model(excitation_type="", plot_model=True) # Excitation type now defaults to initial conditions at PEF
+db.run_model(excitation_type="", plot_model=True)
 ```
 
 ---
