@@ -5,7 +5,7 @@ The `spiro_signal_process` class provides tools to analyze spirometry data, part
 ## Class Initialization
 
 ```python
-sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_signal_is_FE)
+sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_signal_is_FE, scale2)
 ```
 
 ### Parameters
@@ -16,6 +16,7 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 * `patientID`: Unique identifier for the patient
 * `trialID`: Identifier for the trial
 * `flag_given_signal_is_FE`: Boolean flag indicating if the signal is forced expiration only
+* `scale2`: Numeric scaling factor applied to the `time` array (e.g., use `1` if time is already in seconds, or `0.001` if time is in milliseconds)
 
 ---
 
@@ -33,7 +34,7 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
 * `manual_trim(begin_time=0, end_time=None)`
 
-  * Trims the signal between the given time bounds
+  * Trims the signal between the given time bounds and pads at start/end as needed
 
 ### Plotting
 
@@ -61,7 +62,7 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
   * Identifies the index corresponding to Peak Expiratory Flow (PEF)
 
-* `get_FE_start_end(...)`
+* `get_FE_start_end(start_type=None, thresh_percent_begin=2, thresh_percent_end=0.5, check_BEV_criteria=False)`
 
   * Determines the indices corresponding to the start and end of forced expiration
 
@@ -101,7 +102,7 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
 * `check_acceptability_of_spirogram(min_FE_time=6, thresh_percent_end=0.5)`
 
-  * Evaluates acceptability of the spirometry signal. Can now also reject signals if BEV criteria are not met.
+  * Evaluates acceptability of the spirometry signal. Can reject signals if BEV criteria are not met.
 
 ### Spirometry Parameter Computation
 
@@ -146,7 +147,7 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 ## Example Workflow
 
 ```python
-sp = spiro_signal_process(time, volume, flow, patientID='P1', trialID='T1', flag_given_signal_is_FE=False)
+sp = spiro_signal_process(time, volume, flow, patientID='P1', trialID='T1', flag_given_signal_is_FE=False, scale2=1)
 sp.correct_data_positioning()
 sp.standerdize_units()
 accepted, reason = sp.check_acceptability_of_spirogram()

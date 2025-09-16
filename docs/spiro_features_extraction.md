@@ -90,33 +90,36 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 
 * `reorient_model()`
 
-  * Reverts simulated signal to original coordinate system
+  * Reverts the simulated signal to the original coordinate system
 
 * `get_excitation_phase(T1, params)`
 
-  * Internally handles the early phase of expiration (excitation) based on default initial conditions.
+  * Handles the early excitation phase of expiration based on model parameters.
 
 * `calc_hypothesis(params)`
 
-  * Simulates the flow-volume signal using the selected model and parameters
+  * Simulates the flow-volume signal using the selected parameters
 
 * `Cost_Function(params)`
 
-  * Computes error between predicted and actual volume/flow to be minimized
+  * Computes error between predicted and actual volume/flow for optimization
 
-* `run_model(excitation_type="", plot_model=False, ...)`
+* `run_model(excitation_type, plot_model=False, add_title_text="", plot_FVL_only=False)`
 
-  * Fits model using `differential_evolution` optimizer and plots results. Note: The `excitation_type` parameter is now primarily for internal tracking; only the 'Default' behavior (initial conditions from PEF) is actively modeled.
+  * Fits the model using `scipy.optimize.differential_evolution`.
+  * Supported `excitation_type` options: `"Linear"`, `"Exponential pressure"`, `"Non linear"`, or default (empty) which uses initial conditions at PEF.
+  * Choose different optimization bounds based on type, then reorient and compute fit metrics.
 
-* `run_simulation(sim_param, num_sims, percentage_step, plot_FVL_only)`
+* `run_simulation(sim_param='zeta', sim_type='', num_sims=4, percentage_step=10, plot_FVL_only=True)`
 
-  * Runs sensitivity analysis by varying one model parameter. Note: This function only simulates based on the currently active default model, ignoring previously supported `excitation_type` settings.
+  * Runs sensitivity analysis by varying one model parameter (`sim_param`).
+  * `sim_type` can be set (e.g., `'Exponential pressure'`) to include additional parameters in simulation.
 
 * `calc_FEV1_FVC()`
 
   * Computes interpolated FEV1 and final FVC from model output
 
-* `plot_model(only_FVL, add_title_text)`
+* `plot_model(only_FVL=False, add_title_text="")`
 
   * Plots comparison between actual and simulated flow/volume signals
 
@@ -124,7 +127,14 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 
 ## Excitation Types
 
-Previous `excitation_type` options (`Linear`, `Exponential pressure`, `Non linear`) are no longer actively modeled. The `run_model` method now defaults to a single internal mechanism that uses initial conditions (volume and flow at PEF) for the deflation phase. The `excitation_type` parameter can still be passed but primarily serves for internal classification rather than altering model behavior.
+The `run_model` method supports multiple `excitation_type` options:
+
+* `Linear` : linear excitation phase (deprecated)
+* `Exponential pressure` : exponential pressure excitation (deprecated)
+* `Non linear` : nonlinear excitation (deprecated)
+* **Default** (empty string or other) : uses initial conditions at PEF for deflation phase
+
+Based on the specified `excitation_type`, the method applies different optimization bounds for parameter fitting via `scipy.optimize.differential_evolution`.
 
 ---
 
@@ -151,7 +161,7 @@ area_actual = af.calc_areaFE()
 
 # Fit balloon model
 db = spiro_features_extraction.deflating_baloon(time, volume, flow)
-db.run_model(excitation_type="", plot_model=True) # Excitation type now defaults to initial conditions at PEF
+db.run_model(excitation_type="Non linear", plot_model=True)
 ```
 
 ---
@@ -162,7 +172,9 @@ db.run_model(excitation_type="", plot_model=True) # Excitation type now defaults
 * `matplotlib.pyplot`
 * `scipy.optimize.differential_evolution`
 * `sklearn.metrics`
-* `utilities` (custom plotting utility used inside `angle_of_collapse`)
+* `utilities` (custom plotting utility used inside angle_of_collapse)
+
+Ensure these libraries are installed before using this module.
 
 ---
 
