@@ -30,12 +30,13 @@ class spiro_features_extraction:
             (in the FVL TLC should be at 0 and RV>0, flow>0,FVL is right skewed)
              and units standerdized (vol in litres, flow in litres/s and time in s)
         '''     
-        def __init__(self,FE_volume, FE_flow, sex, age, height):
+        def __init__(self,FE_volume, FE_flow, sex, age, height, race):
             self.volume=FE_volume
             self.flow=FE_flow
             self.sex = sex
             self.age = age
             self.height = height
+            self.race = race
         
         
         def calc_AreaPred(self):
