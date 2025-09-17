@@ -5,17 +5,18 @@ The `spiro_signal_process` class provides tools to analyze spirometry data, part
 ## Class Initialization
 
 ```python
-sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_signal_is_FE)
+sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_signal_is_FE, scale3)
 ```
 
 ### Parameters
 
-* `time`: Time array of the spirometry manoeuvre (list or 1D array, preferably in seconds)
-* `volume`: Volume array of the manoeuvre (list or 1D array, preferably in litres)
-* `flow`: Flow array (list or 1D array, preferably in litres/sec)
-* `patientID`: Unique identifier for the patient
-* `trialID`: Identifier for the trial
-* `flag_given_signal_is_FE`: Boolean flag indicating if the signal is forced expiration only
+* `time`: Time array of the spirometry manoeuvre (list or 1D array; units before scaling)
+* `volume`: Volume array of the manoeuvre (list or 1D array; in litres)
+* `flow`: Flow array of the manoeuvre (list or 1D array; in litres/s)
+* `patientID`: Unique patient identifier (string or number)
+* `trialID`: Trial identifier (string or number; e.g., 'Best' for best or only trial)
+* `flag_given_signal_is_FE`: Boolean indicating if the provided signal is forced expiration only
+* `scale3`: Numeric scale factor applied to the `time` array (e.g., 1 if time already in seconds, 1000 if time in milliseconds)
 
 ---
 
@@ -146,7 +147,7 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 ## Example Workflow
 
 ```python
-sp = spiro_signal_process(time, volume, flow, patientID='P1', trialID='T1', flag_given_signal_is_FE=False)
+sp = spiro_signal_process(time, volume, flow, patientID='P1', trialID='T1', flag_given_signal_is_FE=False, scale3=1)
 sp.correct_data_positioning()
 sp.standerdize_units()
 accepted, reason = sp.check_acceptability_of_spirogram()
