@@ -27,8 +27,12 @@ Calculates the area under the expiratory flow-volume loop and its predicted valu
 #### Initialization
 
 ```python
-area = spiro_features_extraction.areaFE(FE_volume, FE_flow, sex, age, height)
+area = spiro_features_extraction.areaFE(FE_volume, FE_flow, sex, age, height, race)
 ```
+
+##### Parameters
+
+* `race`: Placeholder for future race-specific reference equations
 
 #### Methods
 
@@ -122,12 +126,6 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 
 ---
 
-## Excitation Types
-
-Previous `excitation_type` options (`Linear`, `Exponential pressure`, `Non linear`) are no longer actively modeled. The `run_model` method now defaults to a single internal mechanism that uses initial conditions (volume and flow at PEF) for the deflation phase. The `excitation_type` parameter can still be passed but primarily serves for internal classification rather than altering model behavior.
-
----
-
 ## Optimization Notes
 
 All modeling is done via `scipy.optimize.differential_evolution`. Fit metrics include:
@@ -145,7 +143,7 @@ ac = spiro_features_extraction.angle_of_collapse(volume, flow)
 angle, cost = ac.calc_AC(plotModel=True)
 
 # Compute AreaFE % predicted
-af = spiro_features_extraction.areaFE(volume, flow, sex=1, age=35, height=170)
+af = spiro_features_extraction.areaFE(volume, flow, sex=1, age=35, height=170, race='Caucasian')
 area_pred = af.calc_AreaPred()
 area_actual = af.calc_areaFE()
 
