@@ -5,7 +5,17 @@ The `spiro_signal_process` class provides tools to analyze spirometry data, part
 ## Class Initialization
 
 ```python
-sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_signal_is_FE)
+sp = spiro_signal_process(time,
+                           volume,
+                           flow,
+                           patientID,
+                           trialID,
+                           flag_given_signal_is_FE,
+                           scale1,
+                           scale2,
+                           scale3,
+                           scale4,
+                           scale5)
 ```
 
 ### Parameters
@@ -16,6 +26,11 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 * `patientID`: Unique identifier for the patient
 * `trialID`: Identifier for the trial
 * `flag_given_signal_is_FE`: Boolean flag indicating if the signal is forced expiration only
+* `scale1`: Scaling factor applied to the time array at initialization (e.g., to convert units)
+* `scale2`: Reserved scaling parameter (currently unused)
+* `scale3`: Reserved scaling parameter (currently unused)
+* `scale4`: Reserved scaling parameter (currently unused)
+* `scale5`: Reserved scaling parameter (currently unused)
 
 ---
 
@@ -134,19 +149,20 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
 ---
 
-## Notes
-
-* It is important to run `correct_data_positioning()` and `standerdize_units()` before performing calculations or acceptability checks
-* Plotting methods help visualize raw and processed signals for verification
-* ECCS93 reference computations depend on gender, age, and height
-* All array attributes are assumed to be NumPy arrays internally
-
----
-
 ## Example Workflow
 
 ```python
-sp = spiro_signal_process(time, volume, flow, patientID='P1', trialID='T1', flag_given_signal_is_FE=False)
+sp = spiro_signal_process(time,
+                           volume,
+                           flow,
+                           patientID='P1',
+                           trialID='T1',
+                           flag_given_signal_is_FE=False,
+                           scale1=1.0,
+                           scale2=1.0,
+                           scale3=1.0,
+                           scale4=1.0,
+                           scale5=1.0)
 sp.correct_data_positioning()
 sp.standerdize_units()
 accepted, reason = sp.check_acceptability_of_spirogram()
