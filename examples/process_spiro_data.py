@@ -21,7 +21,6 @@ FVLData_unpro=pickle.load(open("FVLdata_unprocessed.p","rb"))
 # a list defined as [Time, Volume, Flow]. This data is assuled to have been already extracted
 
 
-
 #%% Loop through unprocessed data
 FVLData_processed={}
 cnt_progress=0
@@ -33,33 +32,33 @@ for patID in FVLData_unpro:
     Flow=data[2]
     
     # Create a spiro signal process object
-    sp=spirolib.spiro_signal_process(Time,Volume,Flow,patID,"Best",True)
+    # Added scale3 parameter: use 1 if Time is already in seconds
+    sp = spirolib.spiro_signal_process(Time, Volume, Flow, patID, "Best", True, scale3=1)
     
-    #sp.plotFVL(False) # if you want to plot
+    # sp.plotFVL(False) # if you want to plot
     
-    # if only a single trial is available, the following function is not required.
-    # Alternatively, the used can define other functions or performa manual checks
-    # to ensure the quality of the spirometry manoeuvers
+    # If only a single trial is available, the following function is not required.
+    # Alternatively, the user can define other functions or perform manual checks
+    # to ensure the quality of the spirometry manoeuvres.
     # The function can now also reject signals if BEV criteria are not met.
-    flag_accept,reason=sp.check_acceptability_of_spirogram() 
+    flag_accept, reason = sp.check_acceptability_of_spirogram() 
     
     # If the quality of the manoeuvre is acceptable, then finalize the signal
     # by also calculating the reference values. The sex, age and height need to be
     # read as input from an external dataset. Here, we use some random values
     if flag_accept:
-#        sex=df.loc[patID,'sex'] 
-#        age=df.loc[patID,'age']
-#        height=df.loc[patID,'length']
+        # sex = df.loc[patID,'sex']
+        # age = df.loc[patID,'age']
+        # height = df.loc[patID,'length']
         sex = 1
         age = 60
         height = 175
         
-        sp.finalize_signal(sex,float(age),float(height))
-        FVLData_processed[patID]=sp
+        sp.finalize_signal(sex, float(age), float(height))
+        FVLData_processed[patID] = sp
 
-    cnt_progress+=1  
-
+    cnt_progress += 1
     print("Progress (%) = ", round(100*cnt_progress/len(FVLData_unpro)))
 
 #%% Save processed data
-pickle.dump(FVLData_processed,open("FVLdata_processed.p","wb")) 
+pickle.dump(FVLData_processed, open("FVLdata_processed.p", "wb"))
