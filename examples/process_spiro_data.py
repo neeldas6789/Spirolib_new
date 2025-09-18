@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-This script to processes spirometry data into spirolib.spiro_signal_process format
-Requires data to be alread extracted from raw files
+This script processes spirometry data into spirolib.spiro_signal_process format
+Requires data to be already extracted from raw files
 """
 #
 #%% Import libraries
@@ -17,9 +17,8 @@ import spirolib
 #%% Load unprocessed data
 FVLData_unpro=pickle.load(open("FVLdata_unprocessed.p","rb"))
 # In this example, the unprocessed data is the best flow-volume trial data for
-# each patient ID. The the data is stored as a dictionary that maps a string called patient ID (also EMD) to
-# a list defined as [Time, Volume, Flow]. This data is assuled to have been already extracted
-
+# each patient ID. The data is stored as a dictionary that maps a string called patient ID (also EMD) to
+# a list defined as [Time, Volume, Flow]. This data is assumed to have been already extracted
 
 
 #%% Loop through unprocessed data
@@ -32,13 +31,14 @@ for patID in FVLData_unpro:
     Volume=data[1]
     Flow=data[2]
     
-    # Create a spiro signal process object
-    sp=spirolib.spiro_signal_process(Time,Volume,Flow,patID,"Best",True)
+    # Create a spiro signal process object (add scale factor argument)
+    # scale3=1 assumes time is already in seconds
+    sp=spirolib.spiro_signal_process(Time,Volume,Flow,patID,"Best",True,1)
     
     #sp.plotFVL(False) # if you want to plot
     
     # if only a single trial is available, the following function is not required.
-    # Alternatively, the used can define other functions or performa manual checks
+    # Alternatively, the user can define other functions or perform manual checks
     # to ensure the quality of the spirometry manoeuvers
     # The function can now also reject signals if BEV criteria are not met.
     flag_accept,reason=sp.check_acceptability_of_spirogram() 
@@ -62,4 +62,4 @@ for patID in FVLData_unpro:
     print("Progress (%) = ", round(100*cnt_progress/len(FVLData_unpro)))
 
 #%% Save processed data
-pickle.dump(FVLData_processed,open("FVLdata_processed.p","wb")) 
+pickle.dump(FVLData_processed,open("FVLdata_processed.p","wb"))
