@@ -10,19 +10,19 @@ class utilities:
     def __init__(self):
         None
     # derive flow  from volume
-    def get_flow_from_vol(self,vol,time):
+    def get_flow_from_vol(self,vol,time, scale):
         dt=np.diff(time) 
         dvol=np.diff(vol)
         flow=dvol/dt
         flow=np.append(0,flow)
-        return flow
+        return flow/scale
 
     # derive volume  from flow
-    def get_vol_from_flow(self,flow,time):
+    def get_vol_from_flow(self,flow,time. scale):
         dt=np.diff(time)
         dvol=dt*flow[1:]
         vol=np.append(0,np.cumsum(dvol))
-        return vol 
+        return vol/scale 
     
     # derive time from flow-volume loop
     def get_time_from_FVL(self,flow, volume):
