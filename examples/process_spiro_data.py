@@ -13,13 +13,11 @@ import sys
 sys.path.insert(0,'C:/Users/u0113548/Google Drive/PhD/Projects/Spiro dev')
 import spirolib 
 
-
 #%% Load unprocessed data
 FVLData_unpro=pickle.load(open("FVLdata_unprocessed.p","rb"))
 # In this example, the unprocessed data is the best flow-volume trial data for
 # each patient ID. The the data is stored as a dictionary that maps a string called patient ID (also EMD) to
 # a list defined as [Time, Volume, Flow]. This data is assuled to have been already extracted
-
 
 
 #%% Loop through unprocessed data
@@ -33,7 +31,7 @@ for patID in FVLData_unpro:
     Flow=data[2]
     
     # Create a spiro signal process object
-    sp=spirolib.spiro_signal_process(Time,Volume,Flow,patID,"Best",True)
+    sp=spirolib.spiro_signal_process(Time,Volume,Flow,patID,"Best",True,1)
     
     #sp.plotFVL(False) # if you want to plot
     
@@ -62,4 +60,4 @@ for patID in FVLData_unpro:
     print("Progress (%) = ", round(100*cnt_progress/len(FVLData_unpro)))
 
 #%% Save processed data
-pickle.dump(FVLData_processed,open("FVLdata_processed.p","wb")) 
+pickle.dump(FVLData_processed,open("FVLdata_processed.p","wb"))
