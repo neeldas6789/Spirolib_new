@@ -5,4 +5,4 @@ target:
 include:
   - "spirolib"
 
-reinit: "gg"
+reinit: "a"
