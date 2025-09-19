@@ -32,13 +32,14 @@ for EMD in Best_FVL:
          sex = 1 # male
          age = 60 # years
          height = 175 # cm
-         
+         race = None # specify race if available
          
          # Extract an FE signal, use a threshold
          FE_time,FE_vol,FE_flow=sp.get_FE_signal(start_type = 'thresh_PEF',  thresh_percent_begin= 1)
          
          #%% AreaFE % predicted
-         aFE = spirolib.spiro_features_extraction.areaFE(FE_vol, FE_flow, sex, age , height)
+-         aFE = spirolib.spiro_features_extraction.areaFE(FE_vol, FE_flow, sex, age , height)
++         aFE = spirolib.spiro_features_extraction.areaFE(FE_vol, FE_flow, sex, age, height, race)
          Area_Pred = aFE.calc_AreaPred() # Removed corr parameter
          AreaFE = aFE.calc_areaFE()
          AreaFE_PerPred = 100 *(AreaFE/Area_Pred)
@@ -74,7 +75,7 @@ for EMD in Best_FVL:
         # Update the database
         # Some_update_function(dataset, AreaFE_perpred,wn, zeta ***)
          
-        #%% Progress bar
+         #%% Progress bar
          cnt_curves+=1 
          print("Progress (%) = ", round(100*cnt_curves/len(Best_FVL)))
          
