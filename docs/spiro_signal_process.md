@@ -5,12 +5,22 @@ The `spiro_signal_process` class provides tools to analyze spirometry data, part
 ## Class Initialization
 
 ```python
-sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_signal_is_FE)
+sp = spiro_signal_process(
+    time,
+    volume,
+    flow,
+    patientID,
+    trialID,
+    flag_given_signal_is_FE,
+    scale
+)
 ```
+
+- `scale`: multiplier applied to input `time` array to convert units to seconds (e.g., if `time` is in milliseconds, use `scale=1/1000`).
 
 ### Parameters
 
-* `time`: Time array of the spirometry manoeuvre (list or 1D array, preferably in seconds)
+* `time`: Time array of the spirometry manoeuvre (list or 1D array, units scaled by `scale` to seconds)
 * `volume`: Volume array of the manoeuvre (list or 1D array, preferably in litres)
 * `flow`: Flow array (list or 1D array, preferably in litres/sec)
 * `patientID`: Unique identifier for the patient
@@ -29,11 +39,11 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
 * `standerdize_units()`
 
-  * Converts all input data units to litres and seconds
+  * Converts all array units to litres and seconds
 
 * `manual_trim(begin_time=0, end_time=None)`
 
-  * Trims the signal between the given time bounds
+  * Trims the signal based on provided time bounds and pads start/end as needed
 
 ### Plotting
 
@@ -49,13 +59,13 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
 * `smooth_FVL_start(time, vol, flow)`
 
-  * Smoothens the FVL at the start of FE for better shape quality
+  * Smoothens the beginning of FE FVL for better shape quality
 
 ### Index Detection
 
 * `get_Indexes_In_1s(start_index=0)`
 
-  * Returns index at 1 second from the given start point
+  * Returns the index corresponding to 1 second from the given start point
 
 * `get_PEF_index(indx1, indx2)`
 
@@ -63,111 +73,60 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 
 * `get_FE_start_end(...)`
 
-  * Determines the indices corresponding to the start and end of forced expiration
+  * Determines the start and end indices of forced expiration based on BEV or PEF thresholds
 
 * `get_FI_start(index1=None)`
 
-  * Gets the start index of forced inspiration (for combined FI-FE signals)
+  * Finds the start index of forced inspiration (FI)
 
 ### FE Signal Extraction
 
 * `get_FE_signal(start_type=None, thresh_percent_begin=2, thresh_percent_end=0.25, plot=False)`
 
-  * Returns FE segment (time, volume, flow) and optionally plots it. For `BEV` or `thresh_PEF` `start_type`, the output signals will be padded so flow and volume start/end at zero.
+  * Extracts the FE segment (time, volume, flow) and optionally plots it. For `BEV` or `thresh_PEF` start types, the output signals are padded to start/end at zero.
 
-### Trimming & Thresholding
+---
 
-* `backExtrapolate_FEstart()`
-
-  * Uses back-extrapolation to determine FE start and validate BEV criteria
-
-* `threshPEF_FEstart(thresh_percent_begin)`
-
-  * Uses PEF threshold to identify FE start
-
-* `trim_FE_end(thresh_percent_end)`
-
-  * Uses PEF threshold to identify FE end
-
-### Acceptability Checks
+## Acceptability Checks
 
 * `check_rise_to_PEF()`
-
-  * Confirms presence of a rise to PEF at signal start
+  * Verifies a rise to PEF in the signal
 
 * `check_largest_time_interval(max_time_interval=1, FE_time_duration=4)`
-
-  * Checks time gaps in the signal to ensure uniform sampling
+  * Checks for large time gaps in the sampling
 
 * `check_acceptability_of_spirogram(min_FE_time=6, thresh_percent_end=0.5)`
+  * Evaluates overall signal acceptability, including BEV criteria
 
-  * Evaluates acceptability of the spirometry signal. Can now also reject signals if BEV criteria are not met.
+---
 
-### Spirometry Parameter Computation
+## Spirometry Parameter Computation
 
 * `calc_FEV1_FVC()`
-
-  * Calculates FEV1 and FVC using interpolated 1-second volume
+  * Calculates FEV1 and FVC using interpolated volume at 1 second
 
 * `calc_flow_parameters()`
+  * Computes PEF, FEF25, FEF50, FEF75, and FEF25-75 parameters
 
-  * Computes PEF, FEF25, FEF50, FEF75, and FEF25-75
+---
 
-### Reference Prediction (ECCS93)
+## Reference Prediction (ECCS93)
 
 * `calc_ECCS93_ref(param)`
+  * Returns predicted reference values (FVC, FEV1, PEF, etc.) using ECCS93 equations
 
-  * Returns predicted reference value for a given parameter using ECCS93 formulas
+---
 
-### Finalization
+## Finalization
 
 * `finalize_signal(sex=None, age=None, height=None)`
+  * Finalizes processing, calculates standard parameters, and reference percentages; signals and indices are set if not already determined
 
-  * Finalizes signal after processing and calculates all flow/volume metrics and predicted values. If not already set, `index1` and `index2` (start/end of FE) will be determined during this step.
+---
 
-### Internal Attributes (Post-finalization)
+## Internal Attributes (Post-finalization)
 
 * `FEV1`, `FVC`, `Tiff`, `PEF`, `FEF25`, `FEF50`, `FEF75`, `FEF25_75`
-* Reference prediction percentages: `FEV1_PerPred`, `FVC_PerPred`, etc.
-* `index1`, `index2`: Start and end indices of FE segment
+* Reference percentages: `FEV1_PerPred`, `FVC_PerPred`, etc.
+* `index1`, `index2`: Start/end indices of FE segment
 * `signal_finalized`: Flag indicating processing completion
-
----
-
-## Notes
-
-* It is important to run `correct_data_positioning()` and `standerdize_units()` before performing calculations or acceptability checks
-* Plotting methods help visualize raw and processed signals for verification
-* ECCS93 reference computations depend on gender, age, and height
-* All array attributes are assumed to be NumPy arrays internally
-
----
-
-## Example Workflow
-
-```python
-sp = spiro_signal_process(time, volume, flow, patientID='P1', trialID='T1', flag_given_signal_is_FE=False)
-sp.correct_data_positioning()
-sp.standerdize_units()
-accepted, reason = sp.check_acceptability_of_spirogram()
-if accepted:
-    sp.finalize_signal(sex=1, age=35, height=175)
-    print(sp.FEV1, sp.FVC, sp.PEF)
-```
-
----
-
-## Dependencies
-
-* `numpy`
-* `matplotlib.pyplot`
-* `scipy.signal.butter`, `scipy.signal.lfilter`
-* `peakutils`
-
-Make sure these libraries are installed before using the class.
-
----
-
-## Licensing
-
-This module is intended for educational and research purposes. If used clinically or commercially, ensure proper validation and compliance with medical device regulations.
