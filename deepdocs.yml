@@ -1,6 +1,5 @@
 target:
   - url: "docs"
-  - url: "examples"
 
 include:
   - "spirolib"
