@@ -27,8 +27,17 @@ Calculates the area under the expiratory flow-volume loop and its predicted valu
 #### Initialization
 
 ```python
-area = spiro_features_extraction.areaFE(FE_volume, FE_flow, sex, age, height)
+area = spiro_features_extraction.areaFE(FE_volume, FE_flow, sex, age, height, race)
 ```
+
+Parameters:
+
+* `FE_volume`: FE volume signal (numpy array)
+* `FE_flow`: FE flow signal (numpy array)
+* `sex`: 1 for male, 0 for female
+* `age`: integer (years)
+* `height`: integer (cm)
+* `race`: string for demographic category (currently reserved; accepted but not used internally)
 
 #### Methods
 
@@ -68,7 +77,7 @@ ac = spiro_features_extraction.angle_of_collapse(FE_volume, FE_flow)
 
 * `calc_AC(plotModel=False, plotProcess=False)`
 
-  * Returns computed angle of collapse and squared error. Set `plotModel=True` to plot the fitted model, and `plotProcess=True` to visualize the fitting process.
+  * Returns computed angle of collapse and error `Jmin`. Set `plotModel=True` to plot the fitted model, and `plotProcess=True` to visualize the fitting process.
 
 ---
 
@@ -104,21 +113,21 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 
   * Computes error between predicted and actual volume/flow to be minimized
 
-* `run_model(excitation_type="", plot_model=False, ...)`
+* `run_model(excitation_type, plot_model=False, add_title_text="", plot_FVL_only=False)`
 
-  * Fits model using `differential_evolution` optimizer and plots results. Note: The `excitation_type` parameter is now primarily for internal tracking; only the 'Default' behavior (initial conditions from PEF) is actively modeled.
+  * Fits model using `differential_evolution` optimizer and plots results. The default (`excitation_type=''`) uses initial conditions at PEF for deflation.
 
-* `run_simulation(sim_param, num_sims, percentage_step, plot_FVL_only)`
+* `run_simulation(sim_param, sim_type, num_sims, percentage_step, plot_FVL_only)`
 
-  * Runs sensitivity analysis by varying one model parameter. Note: This function only simulates based on the currently active default model, ignoring previously supported `excitation_type` settings.
+  * Runs sensitivity analysis by varying one model parameter based on the active default model.
 
 * `calc_FEV1_FVC()`
 
-  * Computes interpolated FEV1 and final FVC from model output
+  * Computes interpolated FEV1 and final FVC from model output.
 
 * `plot_model(only_FVL, add_title_text)`
 
-  * Plots comparison between actual and simulated flow/volume signals
+  * Plots comparison between actual and simulated flow/volume signals.
 
 ---
 
@@ -145,13 +154,13 @@ ac = spiro_features_extraction.angle_of_collapse(volume, flow)
 angle, cost = ac.calc_AC(plotModel=True)
 
 # Compute AreaFE % predicted
-af = spiro_features_extraction.areaFE(volume, flow, sex=1, age=35, height=170)
+af = spiro_features_extraction.areaFE(volume, flow, sex=1, age=35, height=170, race='Caucasian')
 area_pred = af.calc_AreaPred()
 area_actual = af.calc_areaFE()
 
 # Fit balloon model
 db = spiro_features_extraction.deflating_baloon(time, volume, flow)
-db.run_model(excitation_type="", plot_model=True) # Excitation type now defaults to initial conditions at PEF
+db.run_model(excitation_type='', plot_model=True)  # Excitation type now defaults to initial conditions at PEF
 ```
 
 ---
