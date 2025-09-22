@@ -4,4 +4,4 @@ target:
 include:
   - "spirolib"
 
-reinit: "as"
+reinit: "a"
