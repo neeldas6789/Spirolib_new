@@ -27,18 +27,26 @@ Calculates the area under the expiratory flow-volume loop and its predicted valu
 #### Initialization
 
 ```python
-area = spiro_features_extraction.areaFE(FE_volume, FE_flow, sex, age, height)
+# Note the additional `race` parameter for demographic reference
+area = spiro_features_extraction.areaFE(
+    FE_volume,   # array of FE volumes
+    FE_flow,     # array of FE flows
+    sex,         # 1 for male, 0 for female
+    age,         # in years
+    height,      # in cm
+    race         # e.g., 'Caucasian', 'African', etc.
+)
 ```
 
 #### Methods
 
 * `calc_AreaPred()`
 
-  * Returns predicted AreaFE using demographic inputs.
+  * Returns predicted AreaFE using demographic inputs (sex, age, height, race).
 
 * `calc_areaFE()`
 
-  * Computes area under the FE curve using trapezoidal integration.
+  * Computes the actual area under the FE curve using trapezoidal integration.
 
 ---
 
@@ -55,26 +63,22 @@ ac = spiro_features_extraction.angle_of_collapse(FE_volume, FE_flow)
 #### Methods
 
 * `generate_linemodel(x, y, index)`
-
-  * Constructs a piecewise linear model intersecting point `(x, y)`
+  * Constructs a piecewise linear model intersecting point `(x, y)`.
 
 * `min_line_model_error(plotProcess=False)`
-
-  * Loops through all post-PEF points to find best-fitting point minimizing squared error. Set `plotProcess=True` to visualize the fitting process.
+  * Iterates through all post-PEF points to find the best-fitting intersection minimizing squared error. Use `plotProcess=True` to visualize.
 
 * `get_angle(x_p, y_p)`
-
-  * Computes the geometric angle between two segments joined at `(x_p, y_p)`
+  * Computes the geometric angle between two segments joined at `(x_p, y_p)`.
 
 * `calc_AC(plotModel=False, plotProcess=False)`
-
-  * Returns computed angle of collapse and squared error. Set `plotModel=True` to plot the fitted model, and `plotProcess=True` to visualize the fitting process.
+  * Returns computed angle of collapse and fitting error. Use `plotModel=True` to plot the fitted model.
 
 ---
 
 ### Subclass: `deflating_baloon`
 
-Models the FE signal using second-order ODE dynamics. Simulates the lungs as a deflating balloon.
+Models the FE signal using second-order ODE dynamics to simulate lung deflation.
 
 #### Initialization
 
@@ -85,52 +89,51 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 #### Core Methods
 
 * `orient_and_snip_signal()`
-
-  * Prepares volume/flow signals for modeling by standardizing orientation
+  * Prepares the volume/flow signals by orienting RV and TLC for modeling.
 
 * `reorient_model()`
-
-  * Reverts simulated signal to original coordinate system
+  * Reverts simulated signal to the original coordinate system.
 
 * `get_excitation_phase(T1, params)`
-
-  * Internally handles the early phase of expiration (excitation) based on default initial conditions.
+  * Handles the early phase of expiration based on provided initial conditions.
 
 * `calc_hypothesis(params)`
-
-  * Simulates the flow-volume signal using the selected model and parameters
+  * Simulates the deflation phase beyond PEF using ODE parameters.
 
 * `Cost_Function(params)`
+  * Computes the objective error between simulated and actual signals.
 
-  * Computes error between predicted and actual volume/flow to be minimized
-
-* `run_model(excitation_type="", plot_model=False, ...)`
-
-  * Fits model using `differential_evolution` optimizer and plots results. Note: The `excitation_type` parameter is now primarily for internal tracking; only the 'Default' behavior (initial conditions from PEF) is actively modeled.
+* `run_model(excitation_type, plot_model=False, ...)`
+  * Optimizes model parameters with `differential_evolution`. Supported `excitation_type` values:
+    * `"Linear"`, `"Exponential pressure"`, `"Non linear"`, or default (uses PEF-based initial conditions).
 
 * `run_simulation(sim_param, num_sims, percentage_step, plot_FVL_only)`
-
-  * Runs sensitivity analysis by varying one model parameter. Note: This function only simulates based on the currently active default model, ignoring previously supported `excitation_type` settings.
+  * Performs sensitivity analysis by perturbing one model parameter and re-plotting.
 
 * `calc_FEV1_FVC()`
-
-  * Computes interpolated FEV1 and final FVC from model output
+  * Computes interpolated FEV1 and final FVC from the simulated output.
 
 * `plot_model(only_FVL, add_title_text)`
-
-  * Plots comparison between actual and simulated flow/volume signals
+  * Plots comparison of actual versus simulated FE signals.
 
 ---
 
 ## Excitation Types
 
-Previous `excitation_type` options (`Linear`, `Exponential pressure`, `Non linear`) are no longer actively modeled. The `run_model` method now defaults to a single internal mechanism that uses initial conditions (volume and flow at PEF) for the deflation phase. The `excitation_type` parameter can still be passed but primarily serves for internal classification rather than altering model behavior.
+The `run_model` method supports four modes for the excitation phase:
+
+1. `"Linear"` – linear increase to PEF
+2. `"Exponential pressure"` – exponential pressure build-up
+3. `"Non linear"` – custom non-linear excitation
+4. Default (`""`) – uses the volume and flow at PEF as initial conditions for the deflation phase
+
+These modes allow you to explore different physiologic excitation hypotheses before the balloon deflation model.
 
 ---
 
-## Optimization Notes
+## Optimization Metrics
 
-All modeling is done via `scipy.optimize.differential_evolution`. Fit metrics include:
+All model fits use `scipy.optimize.differential_evolution`. Post-fit metrics include:
 
 * Mean Squared Error (MSE)
 * R² Score (flow and volume)
@@ -140,18 +143,18 @@ All modeling is done via `scipy.optimize.differential_evolution`. Fit metrics in
 ## Example Usage
 
 ```python
-# Compute angle of collapse
+# Angle of collapse
 ac = spiro_features_extraction.angle_of_collapse(volume, flow)
 angle, cost = ac.calc_AC(plotModel=True)
 
-# Compute AreaFE % predicted
-af = spiro_features_extraction.areaFE(volume, flow, sex=1, age=35, height=170)
+# AreaFE % predicted
+af = spiro_features_extraction.areaFE(volume, flow, sex=1, age=35, height=170, race='Asian')
 area_pred = af.calc_AreaPred()
 area_actual = af.calc_areaFE()
 
-# Fit balloon model
+# Deflating balloon model
 db = spiro_features_extraction.deflating_baloon(time, volume, flow)
-db.run_model(excitation_type="", plot_model=True) # Excitation type now defaults to initial conditions at PEF
+db.run_model(excitation_type='Non linear', plot_model=True)
 ```
 
 ---
@@ -161,8 +164,8 @@ db.run_model(excitation_type="", plot_model=True) # Excitation type now defaults
 * `numpy`
 * `matplotlib.pyplot`
 * `scipy.optimize.differential_evolution`
-* `sklearn.metrics`
-* `utilities` (custom plotting utility used inside `angle_of_collapse`)
+* `sklearn.metrics` (for MSE and R²)
+* `utilities` (custom plotting and sampling utilities)
 
 ---
 
