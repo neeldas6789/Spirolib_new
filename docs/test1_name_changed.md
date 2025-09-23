@@ -2,11 +2,17 @@
 A Python library for processing and analyzing spirometry data.
 
 ## Features
-Batch processing of spirometry data
-Feature extraction from spiro signals
-Signal processing utilities
-Installation
+- Signal processing of spirometry data (`spiro_signal_process`)
+- Feature extraction from spiro signals (`spiro_features_extraction`)
+- Lightweight feature extraction (`spiro_features_lite`)
+- Batch processing of spirometry data (`spiro_trialsbatch_process`, `spiro_batch_process`)
+- Signal processing utilities (`utilities`)
+
+## Installation
 Clone the repository and use the library in your Python projects.
 
 ## Usage
-Import the modules from the spirolib package in your Python scripts.
+```python
+from spirolib import spiro_signal_process, spiro_features_extraction, spiro_features_lite, \
+                           spiro_trialsbatch_process, spiro_batch_process, utilities
+```
