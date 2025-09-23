@@ -1,17 +1,25 @@
 ## Spirolib
-A New Python library for processing and analyzing spirometry data.
+A Python library for processing and analyzing spirometry data.
 
 ## Features
-Batch processing of spirometry data
-Feature extraction from spiro signals
-Signal processing utilities
-Installation
-Clone the repository and use the library in your Python projects.
+- Batch processing of spirometry data (`spiro_trialsbatch_process`, `spiro_batch_process`)
+- Signal processing and utilities (`spiro_signal_process`, `utilities`)
+- Feature extraction:
+  - Traditional and lite features (`spiro_features_lite`)
+  - Mathematical models (`spiro_features_extraction`)
+
+## Installation
+Clone the repository:
+```bash
+git clone https://github.com/neeldas6789/Spirolib_new.git
+cd Spirolib_new
+```
 
 ## Usage
-Import the modules from the spirolib package in your Python scripts.
+```python
+from spirolib import spiro_signal_process, spiro_features_lite, spiro_features_extraction
+```
 
 ## Project Structure
-spirolib/ - Main refactored spirolib code
-docs/ - Documentation and guides
-old/ - Old spirolib monolithi module
+- spirolib/ - Core spirolib package code
+- docs/     - Documentation and guides
