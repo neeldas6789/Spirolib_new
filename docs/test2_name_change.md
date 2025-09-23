@@ -1,5 +1,5 @@
 ## Spirolib
-A Python library for processing and analyzing spirometry data.
+A New Python library for processing and analyzing spirometry data.
 
 ## Features
 Batch processing of spirometry data
