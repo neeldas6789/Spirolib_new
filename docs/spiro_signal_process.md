@@ -5,7 +5,7 @@ The `spiro_signal_process` class provides tools to analyze spirometry data, part
 ## Class Initialization
 
 ```python
-sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_signal_is_FE, scale1)
+sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_signal_is_FE)
 ```
 
 ### Parameters
@@ -16,7 +16,7 @@ sp = spiro_signal_process(time, volume, flow, patientID, trialID, flag_given_sig
 * `patientID`: Unique identifier for the patient
 * `trialID`: Identifier for the trial
 * `flag_given_signal_is_FE`: Boolean flag indicating if the signal is forced expiration only
-* `scale1`: a scale parameter
+
 
 ---
 
