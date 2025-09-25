@@ -1,7 +1,0 @@
-target:
-  - url: "docs"
-
-reinit: "sd"
-
-include:
-  - "spirolib"
