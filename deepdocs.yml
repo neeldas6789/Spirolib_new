@@ -1,5 +1,5 @@
 target:
-  - url: "https://github.com/neeldas6789/Spirolib_docs/tree/test-25Sep"
+  - url: "https://github.com/neeldas6789/Spirolib_docs/tree/test-25Sep/docs"
 
 include:
   - "spirolib"
