@@ -1,0 +1,6 @@
+target:
+  - url: "docs/"
+  
+include:  ["spirolib"]
+
+reinit: "a-random-string"
