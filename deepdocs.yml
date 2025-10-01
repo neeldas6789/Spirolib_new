@@ -3,4 +3,4 @@ target:
   
 include:  ["spirolib"]
 
-reinit: "a-random-string"
+reinit: "a"
