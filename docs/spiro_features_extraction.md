@@ -56,19 +56,19 @@ ac = spiro_features_extraction.angle_of_collapse(FE_volume, FE_flow)
 
 * `generate_linemodel(x, y, index)`
 
-  * Constructs a piecewise linear model intersecting point `(x, y)`
+  * Constructs a piecewise linear model intersecting at point `(x, y)`.
 
 * `min_line_model_error(plotProcess=False)`
 
-  * Loops through all post-PEF points to find best-fitting point minimizing squared error. Set `plotProcess=True` to visualize the fitting process.
+  * Loops through post-PEF points to find the best-fitting point minimizing the squared error. Returns `(x_hat, y_hat, Jmin, ind_min)`. Set `plotProcess=True` to visualize the fitting process.
 
 * `get_angle(x_p, y_p)`
 
-  * Computes the geometric angle between two segments joined at `(x_p, y_p)`
+  * Computes the geometric angle between two segments joined at `(x_p, y_p)`.
 
 * `calc_AC(plotModel=False, plotProcess=False)`
 
-  * Returns computed angle of collapse and squared error. Set `plotModel=True` to plot the fitted model, and `plotProcess=True` to visualize the fitting process.
+  * Returns `(angle_of_collapse, Jmin)`. Set `plotModel=True` to plot the fitted model, and `plotProcess=True` to visualize the fitting process.
 
 ---
 
@@ -86,45 +86,59 @@ db = spiro_features_extraction.deflating_baloon(FE_time, FE_volume, FE_flow)
 
 * `orient_and_snip_signal()`
 
-  * Prepares volume/flow signals for modeling by standardizing orientation
+  * Prepares volume/flow signals for modeling by standardizing orientation.
 
 * `reorient_model()`
 
-  * Reverts simulated signal to original coordinate system
+  * Reverts simulated signal to the original coordinate system.
 
 * `get_excitation_phase(T1, params)`
 
-  * Internally handles the early phase of expiration (excitation) based on default initial conditions.
+  * Handles the early phase of expiration (excitation) based on the chosen `excitation_type`.
 
 * `calc_hypothesis(params)`
 
-  * Simulates the flow-volume signal using the selected model and parameters
+  * Simulates the flow-volume signal using the given model parameters.
 
 * `Cost_Function(params)`
 
-  * Computes error between predicted and actual volume/flow to be minimized
+  * Computes error between predicted and actual volume/flow to be minimized.
 
-* `run_model(excitation_type="", plot_model=False, ...)`
+* `run_model(excitation_type, plot_model=False, add_title_text="", plot_FVL_only=False)`
 
-  * Fits model using `differential_evolution` optimizer and plots results. Note: The `excitation_type` parameter is now primarily for internal tracking; only the 'Default' behavior (initial conditions from PEF) is actively modeled.
+  * Fits the model using `scipy.optimize.differential_evolution` and stores model outputs in `self.model_volume` and `self.model_flow`.
+  * `excitation_type`: one of `""` (default initial conditions at PEF), `"Linear"`, `"Exponential pressure"`, or `"Non linear"`. The latter three are available but primarily experimental.
+  * `plot_model`: if `True`, invokes `plot_model()` to visualize results.
+  * `add_title_text`: custom title string prefix for plots.
+  * `plot_FVL_only`: if `True`, only the flow-volume loop is plotted.
 
-* `run_simulation(sim_param, num_sims, percentage_step, plot_FVL_only)`
+* `run_simulation(sim_param='zeta', sim_type="", num_sims=4, percentage_step=10, plot_FVL_only=True)`
 
-  * Runs sensitivity analysis by varying one model parameter. Note: This function only simulates based on the currently active default model, ignoring previously supported `excitation_type` settings.
+  * Runs a sensitivity analysis by varying one model parameter.
+  * `sim_param`: parameter to vary (`'zeta'`, `'omega'`, or `'alpha'`).
+  * `sim_type`: model type (same options as `excitation_type`).
+  * `num_sims`: number of simulations (steps) on either side of baseline.
+  * `percentage_step`: percent change per simulation step.
+  * `plot_FVL_only`: if `True`, only the FVL is plotted; otherwise, time-series panels are shown.
 
 * `calc_FEV1_FVC()`
 
-  * Computes interpolated FEV1 and final FVC from model output
+  * Computes interpolated FEV1 and final FVC from the model output.
 
 * `plot_model(only_FVL, add_title_text)`
 
-  * Plots comparison between actual and simulated flow/volume signals
+  * Plots comparison between the original and simulated flow/volume signals.
 
 ---
 
 ## Excitation Types
 
-Previous `excitation_type` options (`Linear`, `Exponential pressure`, `Non linear`) are no longer actively modeled. The `run_model` method now defaults to a single internal mechanism that uses initial conditions (volume and flow at PEF) for the deflation phase. The `excitation_type` parameter can still be passed but primarily serves for internal classification rather than altering model behavior.
+The `excitation_type` parameter controls the model used for the excitation phase:
+
+* `""` (default): initial conditions derived at PEF, standard deflation model.
+* `"Linear"`: simple linear rise model (experimental).
+* `"Exponential pressure"`: exponential pressure-based rise (experimental).
+* `"Non linear"`: non-linear excitation (experimental).
 
 ---
 
@@ -149,9 +163,12 @@ af = spiro_features_extraction.areaFE(volume, flow, sex=1, age=35, height=170)
 area_pred = af.calc_AreaPred()
 area_actual = af.calc_areaFE()
 
-# Fit balloon model
+# Fit balloon model using default PEF-based excitation
 db = spiro_features_extraction.deflating_baloon(time, volume, flow)
-db.run_model(excitation_type="", plot_model=True) # Excitation type now defaults to initial conditions at PEF
+db.run_model(excitation_type="", plot_model=True)
+
+# Run sensitivity simulation varying zeta
+db.run_simulation(sim_param='zeta', sim_type='', num_sims=5, percentage_step=5)
 ```
 
 ---
